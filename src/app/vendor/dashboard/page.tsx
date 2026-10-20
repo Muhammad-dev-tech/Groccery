@@ -69,6 +69,12 @@ export default async function VendorDashboardPage() {
 
         <div className="flex items-center gap-2">
           <Badge variant={s.variant}>{s.label}</Badge>
+          <Link href="/vendor/service-areas">
+            <Button size="sm" variant="outline">
+              <Store className="w-4 h-4 mr-1.5 text-brand-600" />
+              Delivery Zones
+            </Button>
+          </Link>
           <Link href="/vendor/products">
             <Button size="sm">
               <Package className="w-4 h-4 mr-1.5" />
@@ -152,17 +158,22 @@ export default async function VendorDashboardPage() {
 
         <Card className="hover:border-brand-300 transition-colors">
           <CardHeader>
-            <CardTitle className="text-base text-slate-900">Store Profile & Service Zones</CardTitle>
+            <CardTitle className="text-base text-slate-900">Delivery & Service Zones</CardTitle>
             <CardDescription>
-              Review store contact info, operational city, and service zones (Phase 4).
+              Configure postal codes, neighborhoods, and delivery sectors served by your store.
             </CardDescription>
           </CardHeader>
-          <CardContent>
+          <CardContent className="space-y-3">
             <div className="text-xs text-slate-600 space-y-1">
-              <div><span className="font-semibold">Contact Email:</span> {store.contact_email}</div>
+              <div><span className="font-semibold">Store Address:</span> {store.address || 'Not specified'}, {store.city}, {store.state}</div>
               <div><span className="font-semibold">Phone:</span> {store.contact_phone}</div>
-              <div><span className="font-semibold">Address:</span> {store.address || 'Not specified'}, {store.city}, {store.state}</div>
             </div>
+            <Link href="/vendor/service-areas">
+              <Button variant="outline" className="w-full justify-between">
+                <span>Configure Service Zones</span>
+                <ArrowRight className="w-4 h-4" />
+              </Button>
+            </Link>
           </CardContent>
         </Card>
       </div>

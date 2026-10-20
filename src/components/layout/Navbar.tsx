@@ -6,6 +6,7 @@ import type { User as AuthUser } from '@supabase/supabase-js';
 import { ShoppingBag, Store, Shield, User, Menu, X, LogOut } from 'lucide-react';
 import { createClient } from '@/lib/supabase/client';
 import type { UserRole } from '@/types/database.types';
+import { LocationSelector } from './LocationSelector';
 
 /**
  * Only links to routes that exist in the current phase are shown.
@@ -95,6 +96,10 @@ export function Navbar() {
           >
             Browse Marketplace
           </Link>
+
+          <React.Suspense fallback={<div className="h-7 w-24 rounded-xl bg-slate-100 animate-pulse" />}>
+            <LocationSelector />
+          </React.Suspense>
         </div>
 
         <nav aria-label="Primary" className="hidden md:flex items-center gap-2">

@@ -98,3 +98,22 @@ SET
     price = EXCLUDED.price,
     package_quantity = EXCLUDED.package_quantity,
     stock_quantity = EXCLUDED.stock_quantity;
+
+-- 5. Vendor Service Areas (Geographic Delivery Zones by Postal Code and Neighborhood)
+INSERT INTO public.vendor_service_areas (id, vendor_id, city, state, zone_name, postal_code)
+VALUES
+    -- Organic Valley Market (Springfield)
+    ('a1000000-0000-4000-8000-000000000001', 'v0000000-0000-4000-8000-000000000001', 'Springfield', 'IL', 'Downtown & Capitol District', '62701'),
+    ('a1000000-0000-4000-8000-000000000002', 'v0000000-0000-4000-8000-000000000001', 'Springfield', 'IL', 'Westside & Laketown', '62704'),
+
+    -- Corner Grocers & Deli (Springfield)
+    ('a1000000-0000-4000-8000-000000000003', 'v0000000-0000-4000-8000-000000000002', 'Springfield', 'IL', 'Downtown & Capitol District', '62701'),
+    ('a1000000-0000-4000-8000-000000000004', 'v0000000-0000-4000-8000-000000000002', 'Springfield', 'IL', 'North End & Eastside', '62702'),
+
+    -- Metro Food Mart (Chicago)
+    ('a1000000-0000-4000-8000-000000000005', 'v0000000-0000-4000-8000-000000000003', 'Chicago', 'IL', 'The Loop & River North', '60601'),
+    ('a1000000-0000-4000-8000-000000000006', 'v0000000-0000-4000-8000-000000000003', 'Chicago', 'IL', 'West Loop & Fulton Market', '60607')
+ON CONFLICT (id) DO UPDATE
+SET
+    zone_name = EXCLUDED.zone_name,
+    postal_code = EXCLUDED.postal_code;

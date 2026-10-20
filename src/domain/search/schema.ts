@@ -16,6 +16,8 @@ export const searchFilterSchema = z.object({
       if (val === 'true') return true;
       return false;
     }),
+  postalCode: z.string().trim().optional().or(z.literal('')),
+  city: z.string().trim().optional().or(z.literal('')),
   sort: z.enum(['relevance', 'price_asc', 'price_desc', 'newest']).default('relevance'),
   page: z.coerce.number().int().min(1).default(1),
   limit: z.coerce.number().int().min(1).max(50).default(12),
@@ -43,6 +45,8 @@ export interface SearchProductItem {
   createdAt: string;
   imageUrl: string | null;
   normalizedPrice: NormalizedPriceResult;
+  serviceZones?: string[];
+  servesSelectedLocation?: boolean;
 }
 
 export interface SearchResult {
@@ -52,4 +56,11 @@ export interface SearchResult {
   limit: number;
   totalPages: number;
   filtersApplied: SearchFilterInput;
+  locationCoverage?: {
+    isFilteredByLocation: boolean;
+    isCovered: boolean;
+    postalCode?: string;
+    city?: string;
+    totalApprovedVendorsInZone: number;
+  };
 }

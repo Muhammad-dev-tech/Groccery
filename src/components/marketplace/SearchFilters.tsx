@@ -82,8 +82,11 @@ export function SearchFilters({ categories, vendors }: SearchFiltersProps) {
     router.push(pathname);
   }
 
+  const currentPostal = searchParams.get('postalCode') || '';
+  const currentCity = searchParams.get('city') || '';
+
   const hasActiveFilters = Boolean(
-    currentQuery || currentCategory || currentVendor || currentMinPrice || currentMaxPrice || currentInStock || currentSort !== 'relevance'
+    currentQuery || currentCategory || currentVendor || currentMinPrice || currentMaxPrice || currentInStock || currentSort !== 'relevance' || currentPostal || currentCity
   );
 
   return (

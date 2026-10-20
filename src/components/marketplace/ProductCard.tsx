@@ -54,14 +54,24 @@ export function ProductCard({ product }: ProductCardProps) {
       <CardContent className="p-4 flex-1 flex flex-col justify-between space-y-3">
         <div className="space-y-1.5">
           {/* Vendor store & location */}
-          <div className="flex items-center gap-1.5 text-xs text-slate-500 font-medium">
-            <Store className="w-3.5 h-3.5 text-slate-400 shrink-0" />
-            <span className="truncate">{product.vendorName}</span>
-            <span className="text-slate-300">·</span>
-            <span className="flex items-center gap-0.5 text-slate-400 shrink-0">
-              <MapPin className="w-3 h-3" />
-              {product.vendorCity}
-            </span>
+          <div className="space-y-1">
+            <div className="flex items-center gap-1.5 text-xs text-slate-500 font-medium">
+              <Store className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+              <span className="truncate">{product.vendorName}</span>
+              <span className="text-slate-300">·</span>
+              <span className="flex items-center gap-0.5 text-slate-400 shrink-0">
+                <MapPin className="w-3 h-3" />
+                {product.vendorCity}
+              </span>
+            </div>
+
+            {product.servesSelectedLocation && (
+              <div className="flex items-center gap-1">
+                <span className="inline-flex items-center gap-1 text-[10px] font-semibold text-emerald-700 bg-emerald-50 px-1.5 py-0.5 rounded border border-emerald-200/80">
+                  <CheckCircle2 className="w-3 h-3 text-emerald-600 shrink-0" /> Delivers to your zone
+                </span>
+              </div>
+            )}
           </div>
 
           {/* Product Name */}

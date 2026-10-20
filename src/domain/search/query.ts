@@ -1,5 +1,6 @@
 import { createClient } from '@/lib/supabase/server';
 import { calculateNormalizedPrice } from '@/domain/units/normalizer';
+import { evaluateLocationCoverage } from '@/domain/location/service';
 import {
   searchFilterSchema,
   type SearchFilterInput,
@@ -17,12 +18,44 @@ export {
 /**
  * Executes marketplace-wide search querying real PostgreSQL records.
  * Only returns active products from approved vendors.
+ * If location criteria (postal code or city) are provided, only products from
+ * vendors serving that exact geographic zone are returned.
  */
 export async function searchMarketplaceProducts(
   rawFilters: Partial<SearchFilterInput>
 ): Promise<SearchResult> {
   const parsed = searchFilterSchema.parse(rawFilters);
   const supabase = await createClient();
+
+  const isLocationFiltered = Boolean(parsed.postalCode || parsed.city);
+  let locationCoverage = undefined;
+
+  if (isLocationFiltered) {
+    const coverage = await evaluateLocationCoverage({
+      postalCode: parsed.postalCode,
+      city: parsed.city,
+    });
+
+    locationCoverage = {
+      isFilteredByLocation: true,
+      isCovered: coverage.isCovered,
+      postalCode: parsed.postalCode,
+      city: parsed.city,
+      totalApprovedVendorsInZone: coverage.totalApprovedVendorsInZone,
+    };
+
+    if (!coverage.isCovered || coverage.vendorIds.length === 0) {
+      return {
+        products: [],
+        totalCount: 0,
+        page: parsed.page,
+        limit: parsed.limit,
+        totalPages: 0,
+        filtersApplied: parsed,
+        locationCoverage,
+      };
+    }
+  }
 
   const offset = (parsed.page - 1) * parsed.limit;
 
@@ -43,7 +76,14 @@ export async function searchMarketplaceProducts(
       stock_quantity,
       is_available,
       created_at,
-      vendor:vendor_stores!products_vendor_id_fkey(id, name, city, state, status),
+      vendor:vendor_stores!products_vendor_id_fkey(
+        id,
+        name,
+        city,
+        state,
+        status,
+        vendor_service_areas(zone_name, postal_code)
+      ),
       category:categories!products_category_id_fkey(id, name, icon),
       images:product_images(image_url, is_primary)
       `,
@@ -52,6 +92,14 @@ export async function searchMarketplaceProducts(
     .eq('is_archived', false)
     .eq('is_available', true)
     .eq('vendor.status', 'approved');
+
+  if (isLocationFiltered && locationCoverage?.isCovered) {
+    const coverage = await evaluateLocationCoverage({
+      postalCode: parsed.postalCode,
+      city: parsed.city,
+    });
+    query = query.in('vendor_id', coverage.vendorIds);
+  }
 
   // Text search on product name or description
   if (parsed.query) {
@@ -135,6 +183,10 @@ export async function searchMarketplaceProducts(
         row.unit_of_measurement
       );
 
+      const serviceZones = (row.vendor.vendor_service_areas || []).map(
+        (z: any) => `${z.zone_name}${z.postal_code ? ` (${z.postal_code})` : ''}`
+      );
+
       return {
         id: row.id,
         vendorId: row.vendor_id,
@@ -155,6 +207,8 @@ export async function searchMarketplaceProducts(
         createdAt: row.created_at,
         imageUrl: primaryImage,
         normalizedPrice,
+        serviceZones,
+        servesSelectedLocation: isLocationFiltered ? true : undefined,
       };
     });
 
@@ -165,5 +219,6 @@ export async function searchMarketplaceProducts(
     limit: parsed.limit,
     totalPages,
     filtersApplied: parsed,
+    locationCoverage,
   };
 }

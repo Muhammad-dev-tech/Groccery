@@ -124,7 +124,15 @@ export interface Database {
           zone_name?: string;
           postal_code?: string | null;
         };
-        Relationships: [];
+        Relationships: [
+          {
+            foreignKeyName: "vendor_service_areas_vendor_id_fkey";
+            columns: ["vendor_id"];
+            isOneToOne: false;
+            referencedRelation: "vendor_stores";
+            referencedColumns: ["id"];
+          }
+        ];
       };
       categories: {
         Row: {
