@@ -42,19 +42,24 @@ export default function HomePage() {
             One marketplace for your community: discover local vendors, compare equivalent products fairly, and order from several stores in one checkout.
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
+            <Link href="/marketplace">
+              <Button id="hero-browse" size="lg" className="shadow-md">
+                Browse marketplace
+              </Button>
+            </Link>
             <Link href="/register">
-              <Button id="hero-register" size="lg">
-                <UserPlus className="w-4 h-4" aria-hidden /> Create a customer account
+              <Button id="hero-register" size="lg" variant="outline">
+                <UserPlus className="w-4 h-4" aria-hidden /> Create account
               </Button>
             </Link>
             <Link href="/vendor/register">
-              <Button id="hero-vendor" size="lg" variant="outline">
-                <Store className="w-4 h-4 text-brand-600" aria-hidden /> Register your store
+              <Button id="hero-vendor" size="lg" variant="ghost">
+                <Store className="w-4 h-4 text-brand-600" aria-hidden /> Sell with us
               </Button>
             </Link>
           </div>
           <p className="text-xs text-slate-400">
-            Product search and checkout are under active development.
+            Compare unit prices normalized per 100 g, 1 kg, 1 L, or piece across verified local vendors.
           </p>
         </div>
       </section>

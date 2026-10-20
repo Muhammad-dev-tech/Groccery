@@ -1,0 +1,169 @@
+import { createClient } from '@/lib/supabase/server';
+import { calculateNormalizedPrice } from '@/domain/units/normalizer';
+import {
+  searchFilterSchema,
+  type SearchFilterInput,
+  type SearchProductItem,
+  type SearchResult,
+} from './schema';
+
+export {
+  searchFilterSchema,
+  type SearchFilterInput,
+  type SearchProductItem,
+  type SearchResult,
+};
+
+/**
+ * Executes marketplace-wide search querying real PostgreSQL records.
+ * Only returns active products from approved vendors.
+ */
+export async function searchMarketplaceProducts(
+  rawFilters: Partial<SearchFilterInput>
+): Promise<SearchResult> {
+  const parsed = searchFilterSchema.parse(rawFilters);
+  const supabase = await createClient();
+
+  const offset = (parsed.page - 1) * parsed.limit;
+
+  // Build Supabase Query
+  let query = supabase
+    .from('products')
+    .select(
+      `
+      id,
+      vendor_id,
+      category_id,
+      name,
+      description,
+      price,
+      currency,
+      package_quantity,
+      unit_of_measurement,
+      stock_quantity,
+      is_available,
+      created_at,
+      vendor:vendor_stores!products_vendor_id_fkey(id, name, city, state, status),
+      category:categories!products_category_id_fkey(id, name, icon),
+      images:product_images(image_url, is_primary)
+      `,
+      { count: 'exact' }
+    )
+    .eq('is_archived', false)
+    .eq('is_available', true)
+    .eq('vendor.status', 'approved');
+
+  // Text search on product name or description
+  if (parsed.query) {
+    query = query.or(`name.ilike.%${parsed.query}%,description.ilike.%${parsed.query}%`);
+  }
+
+  // Category filter
+  if (parsed.categoryId) {
+    query = query.eq('category_id', parsed.categoryId);
+  }
+
+  // Vendor filter
+  if (parsed.vendorId) {
+    query = query.eq('vendor_id', parsed.vendorId);
+  }
+
+  // Min price filter
+  if (parsed.minPrice !== undefined && parsed.minPrice > 0) {
+    query = query.gte('price', parsed.minPrice);
+  }
+
+  // Max price filter
+  if (parsed.maxPrice !== undefined && parsed.maxPrice > 0) {
+    query = query.lte('price', parsed.maxPrice);
+  }
+
+  // In-stock availability filter
+  if (parsed.inStockOnly) {
+    query = query.gt('stock_quantity', 0);
+  }
+
+  // Sorting
+  switch (parsed.sort) {
+    case 'price_asc':
+      query = query.order('price', { ascending: true });
+      break;
+    case 'price_desc':
+      query = query.order('price', { ascending: false });
+      break;
+    case 'newest':
+      query = query.order('created_at', { ascending: false });
+      break;
+    case 'relevance':
+    default:
+      query = query.order('created_at', { ascending: false });
+      break;
+  }
+
+  // Pagination range
+  query = query.range(offset, offset + parsed.limit - 1);
+
+  const { data, count, error } = await query;
+
+  if (error) {
+    console.error('[searchMarketplaceProducts] query failed', error);
+    return {
+      products: [],
+      totalCount: 0,
+      page: parsed.page,
+      limit: parsed.limit,
+      totalPages: 0,
+      filtersApplied: parsed,
+    };
+  }
+
+  const totalCount = count || 0;
+  const totalPages = Math.ceil(totalCount / parsed.limit);
+
+  // Map and calculate normalized prices
+  const products: SearchProductItem[] = (data || [])
+    .filter((row: any) => row.vendor && row.vendor.status === 'approved')
+    .map((row: any) => {
+      const primaryImage =
+        row.images?.find((img: any) => img.is_primary)?.image_url ||
+        row.images?.[0]?.image_url ||
+        null;
+
+      const normalizedPrice = calculateNormalizedPrice(
+        row.price,
+        row.package_quantity,
+        row.unit_of_measurement
+      );
+
+      return {
+        id: row.id,
+        vendorId: row.vendor_id,
+        vendorName: row.vendor.name,
+        vendorCity: row.vendor.city,
+        vendorState: row.vendor.state,
+        categoryId: row.category_id,
+        categoryName: row.category?.name || 'General',
+        categoryIcon: row.category?.icon || null,
+        name: row.name,
+        description: row.description,
+        price: row.price,
+        currency: row.currency,
+        packageQuantity: row.package_quantity,
+        unitOfMeasurement: row.unit_of_measurement,
+        stockQuantity: row.stock_quantity,
+        isAvailable: row.is_available,
+        createdAt: row.created_at,
+        imageUrl: primaryImage,
+        normalizedPrice,
+      };
+    });
+
+  return {
+    products,
+    totalCount,
+    page: parsed.page,
+    limit: parsed.limit,
+    totalPages,
+    filtersApplied: parsed,
+  };
+}

@@ -78,14 +78,24 @@ export function Navbar() {
   return (
     <header className="sticky top-0 z-40 w-full border-b border-slate-200/80 bg-white/90 backdrop-blur-md">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between h-16">
-        <Link href="/" className="flex items-center gap-2 group" aria-label="FreshGrocer home">
-          <div className="w-10 h-10 rounded-xl bg-brand-600 flex items-center justify-center text-white shadow-sm group-hover:bg-brand-700 transition-colors">
-            <ShoppingBag className="w-5 h-5" aria-hidden />
-          </div>
-          <span className="font-extrabold text-lg text-slate-900 tracking-tight">
-            Fresh<span className="text-brand-600">Grocer</span>
-          </span>
-        </Link>
+        <div className="flex items-center gap-6">
+          <Link href="/" className="flex items-center gap-2 group" aria-label="FreshGrocer home">
+            <div className="w-10 h-10 rounded-xl bg-brand-600 flex items-center justify-center text-white shadow-sm group-hover:bg-brand-700 transition-colors">
+              <ShoppingBag className="w-5 h-5" aria-hidden />
+            </div>
+            <span className="font-extrabold text-lg text-slate-900 tracking-tight">
+              Fresh<span className="text-brand-600">Grocer</span>
+            </span>
+          </Link>
+
+          <Link
+            id="nav-marketplace"
+            href="/marketplace"
+            className="hidden sm:inline-flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-lg text-slate-700 hover:text-brand-700 hover:bg-brand-50/70 border border-transparent hover:border-brand-200 transition-colors"
+          >
+            Browse Marketplace
+          </Link>
+        </div>
 
         <nav aria-label="Primary" className="hidden md:flex items-center gap-2">
           {user ? roleLinks : guestLinks}
@@ -105,6 +115,14 @@ export function Navbar() {
 
       {mobileOpen && (
         <nav id="mobile-nav" aria-label="Mobile" className="md:hidden border-t border-slate-200 bg-white px-4 py-4 flex flex-col gap-2">
+          <Link
+            id="nav-marketplace-mobile"
+            href="/marketplace"
+            onClick={() => setMobileOpen(false)}
+            className="flex items-center gap-2 text-sm font-semibold text-brand-700 px-3 py-2.5 rounded-lg bg-brand-50 border border-brand-200"
+          >
+            Browse Marketplace
+          </Link>
           {user ? roleLinks : guestLinks}
         </nav>
       )}
