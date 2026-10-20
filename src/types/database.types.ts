@@ -89,7 +89,15 @@ export interface Database {
           status?: StoreStatus;
           updated_at?: string;
         };
-        Relationships: [];
+        Relationships: [
+          {
+            foreignKeyName: "vendor_stores_owner_id_fkey";
+            columns: ["owner_id"];
+            isOneToOne: false;
+            referencedRelation: "profiles";
+            referencedColumns: ["id"];
+          }
+        ];
       };
       vendor_service_areas: {
         Row: {
@@ -192,7 +200,22 @@ export interface Database {
           is_archived?: boolean;
           updated_at?: string;
         };
-        Relationships: [];
+        Relationships: [
+          {
+            foreignKeyName: "products_vendor_id_fkey";
+            columns: ["vendor_id"];
+            isOneToOne: false;
+            referencedRelation: "vendor_stores";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "products_category_id_fkey";
+            columns: ["category_id"];
+            isOneToOne: false;
+            referencedRelation: "categories";
+            referencedColumns: ["id"];
+          }
+        ];
       };
       product_images: {
         Row: {
@@ -213,7 +236,15 @@ export interface Database {
           image_url?: string;
           is_primary?: boolean;
         };
-        Relationships: [];
+        Relationships: [
+          {
+            foreignKeyName: "product_images_product_id_fkey";
+            columns: ["product_id"];
+            isOneToOne: false;
+            referencedRelation: "products";
+            referencedColumns: ["id"];
+          }
+        ];
       };
       customer_orders: {
         Row: {
