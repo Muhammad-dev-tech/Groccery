@@ -2,6 +2,7 @@
 
 import * as React from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import type { User as AuthUser } from '@supabase/supabase-js';
 import { ShoppingBag, Store, Shield, User, Menu, X, LogOut, ClipboardList, PackageCheck } from 'lucide-react';
 import { createClient } from '@/lib/supabase/client';
@@ -13,6 +14,7 @@ import { CartNavButton } from '@/components/cart/CartNavButton';
  * Only links to routes that exist in the current phase are shown.
  */
 export function Navbar() {
+  const router = useRouter();
   const [mobileOpen, setMobileOpen] = React.useState(false);
   const [user, setUser] = React.useState<AuthUser | null>(null);
   const [role, setRole] = React.useState<UserRole | null>(null);
@@ -38,7 +40,8 @@ export function Navbar() {
 
   async function handleSignOut() {
     await supabase.auth.signOut();
-    window.location.href = '/';
+    router.push('/');
+    router.refresh();
   }
 
   const roleLinks = (
