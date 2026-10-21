@@ -37,6 +37,7 @@ export function ProductForm({ categories, initialData, onSuccess, onCancel }: Pr
   const [loading, setLoading] = React.useState(false);
   const [error, setError] = React.useState<string | null>(null);
   const [success, setSuccess] = React.useState<string | null>(null);
+  const [isAvailable, setIsAvailable] = React.useState(initialData?.isAvailable ?? true);
 
   const isEditing = Boolean(initialData);
 
@@ -210,16 +211,19 @@ export function ProductForm({ categories, initialData, onSuccess, onCancel }: Pr
               />
             </div>
 
-            <div className="sm:col-span-2 flex items-center gap-2 pt-1">
+            <input type="hidden" name="currency" value="NGN" />
+            <input type="hidden" name="isAvailable" value={isAvailable ? 'true' : 'false'} />
+
+            <div className="sm:col-span-2 flex items-center gap-2.5 p-3 rounded-xl bg-brand-50/50 dark:bg-brand-950/30 border border-brand-200/60 dark:border-brand-800/60">
               <input
                 type="checkbox"
-                id="isAvailable"
-                name="isAvailable"
-                defaultChecked={initialData?.isAvailable ?? true}
-                className="h-4 w-4 rounded border-slate-300 text-brand-600 focus:ring-brand-500"
+                id="isAvailableCheckbox"
+                checked={isAvailable}
+                onChange={(e) => setIsAvailable(e.target.checked)}
+                className="h-4 w-4 rounded border-slate-300 text-brand-600 focus:ring-brand-500 cursor-pointer"
               />
-              <label htmlFor="isAvailable" className="text-xs font-medium text-slate-700">
-                Mark as active & available for customer discovery and ordering
+              <label htmlFor="isAvailableCheckbox" className="text-xs font-semibold text-slate-800 dark:text-slate-200 cursor-pointer">
+                Mark as active & available for customer discovery on Marketplace
               </label>
             </div>
           </div>

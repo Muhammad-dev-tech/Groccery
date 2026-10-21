@@ -4,7 +4,7 @@ import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/com
 import { Badge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
 import { ProductForm } from '@/components/vendor/ProductForm';
-import { Store, Plus, AlertTriangle, Package, Check, EyeOff, Trash2 } from 'lucide-react';
+import { Store, Plus, X, AlertTriangle, Package, Check, EyeOff, Trash2 } from 'lucide-react';
 import { toggleProductAvailabilityAction, archiveProductAction } from './actions';
 import Link from 'next/link';
 
@@ -90,8 +90,8 @@ export default async function VendorProductsPage({
           </Link>
           {isApproved ? (
             <Link href={isAdding ? '/vendor/products' : '/vendor/products?action=new'}>
-              <Button size="sm">
-                <Plus className="w-4 h-4 mr-1.5" />
+              <Button size="sm" variant={isAdding ? 'outline' : 'primary'}>
+                {isAdding ? <X className="w-4 h-4 mr-1.5" /> : <Plus className="w-4 h-4 mr-1.5" />}
                 {isAdding ? 'Close Form' : 'Add New Product'}
               </Button>
             </Link>
@@ -186,7 +186,7 @@ export default async function VendorProductsPage({
                           {p.category?.icon ? `${p.category.icon} ` : ''}{p.category?.name || 'General'}
                         </td>
                         <td className="py-3 px-3 font-bold text-slate-900">
-                          ${p.price.toFixed(2)}
+                          ₦{p.price.toLocaleString()}
                         </td>
                         <td className="py-3 px-3">
                           <span className="font-mono text-slate-700">{p.package_quantity} {p.unit_of_measurement}</span>

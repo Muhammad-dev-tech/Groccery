@@ -49,11 +49,11 @@ export async function createProductAction(formData: FormData): Promise<ProductAc
     description: formData.get('description'),
     categoryId: formData.get('categoryId'),
     price: formData.get('price'),
-    currency: formData.get('currency') || 'USD',
+    currency: formData.get('currency') || 'NGN',
     packageQuantity: formData.get('packageQuantity'),
     unitOfMeasurement: formData.get('unitOfMeasurement'),
     stockQuantity: formData.get('stockQuantity'),
-    isAvailable: formData.get('isAvailable') === 'true' || formData.get('isAvailable') === 'on',
+    isAvailable: formData.get('isAvailable') !== 'false' && formData.get('isAvailable') !== '0',
     imageUrl: formData.get('imageUrl') || null,
   };
 
@@ -141,7 +141,7 @@ export async function updateProductAction(formData: FormData): Promise<ProductAc
     description: formData.get('description'),
     categoryId: formData.get('categoryId'),
     price: formData.get('price'),
-    currency: formData.get('currency') || 'USD',
+    currency: formData.get('currency') || 'NGN',
     packageQuantity: formData.get('packageQuantity'),
     unitOfMeasurement: formData.get('unitOfMeasurement'),
     stockQuantity: formData.get('stockQuantity'),
