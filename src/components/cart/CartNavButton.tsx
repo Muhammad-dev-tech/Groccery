@@ -20,7 +20,7 @@ export function CartNavButton({ onClick, className }: CartNavButtonProps) {
       id="nav-cart-btn"
       href="/cart"
       onClick={onClick}
-      className={`relative inline-flex items-center gap-1.5 text-xs font-semibold px-3 py-2 rounded-xl bg-slate-50 hover:bg-brand-50 text-slate-800 hover:text-brand-700 border border-slate-200 hover:border-brand-200 transition-colors ${
+      className={`relative inline-flex items-center gap-1.5 text-xs font-semibold px-3 py-2 rounded-xl bg-slate-50 dark:bg-slate-900 hover:bg-brand-50 dark:hover:bg-slate-800 text-slate-800 dark:text-slate-200 hover:text-brand-700 dark:hover:text-brand-400 border border-slate-200 dark:border-slate-700 hover:border-brand-200 dark:hover:border-slate-600 transition-colors ${
         className || ''
       }`}
       aria-label={`Shopping cart with ${count} items`}

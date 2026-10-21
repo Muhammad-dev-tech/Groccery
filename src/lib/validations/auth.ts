@@ -37,6 +37,18 @@ export const registerVendorSchema = z
     path: ['confirmPassword'],
   });
 
+export const onboardStoreSchema = z.object({
+  storeName: z.string().min(3, 'Store name must be at least 3 characters'),
+  storeDescription: z.string().optional(),
+  contactPhone: z.string().min(7, 'Please provide a valid phone number'),
+  address: z.string().min(5, 'Store address is required'),
+  city: z.string().min(2, 'City is required'),
+  state: z.string().min(2, 'State or province is required'),
+  postalCode: z.string().optional(),
+});
+
+export type OnboardStoreInput = z.infer<typeof onboardStoreSchema>;
+
 export const resetPasswordSchema = z.object({
   email: z.string().email('Please enter a valid email address'),
 });

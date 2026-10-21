@@ -5,6 +5,7 @@ import {
   loginSchema,
   registerCustomerSchema,
   registerVendorSchema,
+  onboardStoreSchema,
   resetPasswordSchema,
   updatePasswordSchema,
   assignAdminRoleSchema,
@@ -114,12 +115,104 @@ export async function registerCustomerAction(formData: FormData): Promise<Action
 
 /**
  * Register as Vendor
- * Creates auth user with 'vendor' role and registers a pending vendor store
+ * Supports both existing signed-in customers onboarding a store and new guest vendor registration
  */
 export async function registerVendorAction(formData: FormData): Promise<ActionResponse> {
   const rawData = Object.fromEntries(formData.entries());
-  const parsed = registerVendorSchema.safeParse(rawData);
+  const supabase = await createClient();
+  const adminClient = createAdminClient();
 
+  let {
+    data: { user: currentUser },
+  } = await supabase.auth.getUser();
+
+  // If session cookie wasn't detected by createClient, but client passed userId from authenticated browser session:
+  if (!currentUser && rawData.userId) {
+    const { data: userData } = await adminClient.auth.admin.getUserById(String(rawData.userId));
+    if (userData?.user) {
+      currentUser = userData.user;
+    }
+  }
+
+  let targetUserId: string;
+  let contactEmail: string;
+
+  if (currentUser) {
+    // Current user is already signed in! Validate store details only.
+    const parsed = onboardStoreSchema.safeParse(rawData);
+    if (!parsed.success) {
+      return {
+        success: false,
+        error: parsed.error.issues[0]?.message || 'Invalid store details.',
+      };
+    }
+
+    targetUserId = currentUser.id;
+    contactEmail = currentUser.email || String(rawData.email || '');
+
+    // Check if store already exists for this owner
+    const { data: existingStore } = await adminClient
+      .from('vendor_stores')
+      .select('id, name')
+      .eq('owner_id', targetUserId)
+      .maybeSingle();
+
+    if (existingStore) {
+      // Ensure user profile role is vendor
+      await adminClient.from('profiles').update({ role: 'vendor' }).eq('id', targetUserId);
+      revalidatePath('/vendor/dashboard');
+      revalidatePath('/account');
+      return {
+        success: true,
+        message: 'Your store is already active!',
+        redirectTo: '/vendor/dashboard',
+      };
+    }
+
+    const baseSlug = parsed.data.storeName
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/(^-|-$)+/g, '')
+      .slice(0, 48);
+
+    const { error: storeError } = await adminClient.from('vendor_stores').insert({
+      owner_id: targetUserId,
+      name: parsed.data.storeName,
+      slug: `${baseSlug}-${crypto.randomUUID().slice(0, 6)}`,
+      description: parsed.data.storeDescription || null,
+      contact_email: contactEmail,
+      contact_phone: parsed.data.contactPhone,
+      address: parsed.data.address,
+      city: parsed.data.city,
+      state: parsed.data.state,
+      postal_code: parsed.data.postalCode || null,
+      status: 'approved',
+    });
+
+    if (storeError) {
+      const duplicateName = storeError.code === '23505';
+      return {
+        success: false,
+        error: duplicateName
+          ? 'A store with this name already exists. Please choose another name.'
+          : 'Could not create your store: ' + storeError.message,
+      };
+    }
+
+    // Upgrade user profile role to vendor
+    await adminClient.from('profiles').update({ role: 'vendor' }).eq('id', targetUserId);
+    revalidatePath('/vendor/dashboard');
+    revalidatePath('/account');
+
+    return {
+      success: true,
+      message: 'Store registered and approved successfully!',
+      redirectTo: '/vendor/dashboard',
+    };
+  }
+
+  // Otherwise, user is a guest creating a new user account + store
+  const parsed = registerVendorSchema.safeParse(rawData);
   if (!parsed.success) {
     return {
       success: false,
@@ -127,7 +220,6 @@ export async function registerVendorAction(formData: FormData): Promise<ActionRe
     };
   }
 
-  const supabase = await createClient();
   const { data: authData, error: authError } = await supabase.auth.signUp({
     email: parsed.data.email,
     password: parsed.data.password,
@@ -135,7 +227,7 @@ export async function registerVendorAction(formData: FormData): Promise<ActionRe
       emailRedirectTo: `${getPublicEnv().appUrl}/auth/confirm?next=/vendor/dashboard`,
       data: {
         full_name: parsed.data.fullName,
-        role: 'vendor', // Public registration role is strictly 'vendor'
+        role: 'vendor',
       },
     },
   });
@@ -147,51 +239,48 @@ export async function registerVendorAction(formData: FormData): Promise<ActionRe
     };
   }
 
-  // Supabase returns an obfuscated user with no identities when the email already exists.
   if (!authData.user.identities || authData.user.identities.length === 0) {
-    return { success: false, error: 'An account with this email already exists. Please sign in instead.' };
+    return { success: false, error: 'An account with this email already exists. Please sign in first, then register your store.' };
   }
 
-  // With email confirmation enabled there is no session yet, so the anon client cannot
-  // insert under RLS. The user id comes from the sign-up we just performed (not from
-  // client input), and status is forced to 'pending'.
-  const adminClient = createAdminClient();
+  targetUserId = authData.user.id;
+  contactEmail = parsed.data.email;
+
   const baseSlug = parsed.data.storeName
     .toLowerCase()
     .replace(/[^a-z0-9]+/g, '-')
     .replace(/(^-|-$)+/g, '')
     .slice(0, 48);
+
   const { error: storeError } = await adminClient.from('vendor_stores').insert({
-    owner_id: authData.user.id,
+    owner_id: targetUserId,
     name: parsed.data.storeName,
     slug: `${baseSlug}-${crypto.randomUUID().slice(0, 6)}`,
     description: parsed.data.storeDescription || null,
-    contact_email: parsed.data.email,
+    contact_email: contactEmail,
     contact_phone: parsed.data.contactPhone,
     address: parsed.data.address,
     city: parsed.data.city,
     state: parsed.data.state,
     postal_code: parsed.data.postalCode || null,
-    status: 'pending',
+    status: 'approved',
   });
 
   if (storeError) {
-    // Roll back the auth user so the applicant can retry cleanly.
-    await adminClient.auth.admin.deleteUser(authData.user.id);
+    await adminClient.auth.admin.deleteUser(targetUserId);
     const duplicateName = storeError.code === '23505';
-    console.error('[registerVendor] store insert failed', { code: storeError.code });
     return {
       success: false,
       error: duplicateName
         ? 'A store with this name already exists. Please choose another name.'
-        : 'Could not create your store. Please try again.',
+        : 'Could not create your store: ' + storeError.message,
     };
   }
 
   return {
     success: true,
-    message: 'Vendor application submitted! Your store will be activated upon admin review.',
-    redirectTo: '/login?vendorPending=true',
+    message: 'Store registered successfully! Redirecting to Vendor Hub...',
+    redirectTo: '/vendor/dashboard',
   };
 }
 

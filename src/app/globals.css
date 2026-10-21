@@ -178,3 +178,32 @@ body {
 .dark .shadow-premium {
   box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.45) !important;
 }
+
+/* Dark mode header and navigation visibility guarantee */
+.dark header {
+  background-color: rgba(9, 14, 26, 0.96) !important;
+  border-bottom-color: #1e293b !important;
+}
+
+.dark header a,
+.dark header button {
+  color: #f1f5f9;
+}
+
+.dark header .text-slate-700,
+.dark header .text-slate-800,
+.dark header .text-slate-900,
+.dark header .text-slate-600 {
+  color: #f1f5f9 !important;
+}
+
+.dark header .text-slate-500,
+.dark header .text-slate-400 {
+  color: #94a3b8 !important;
+}
+
+.dark header a:hover,
+.dark header button:hover {
+  color: #10b981 !important;
+}
+
