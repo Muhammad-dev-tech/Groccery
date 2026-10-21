@@ -1,6 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  output: 'standalone',
+  // Use standalone mode for Docker & Render, standard serverless for Vercel
+  output: process.env.VERCEL ? undefined : 'standalone',
   reactStrictMode: true,
   images: {
     remotePatterns: [
