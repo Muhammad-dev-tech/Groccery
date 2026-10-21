@@ -125,16 +125,21 @@ export default async function VendorDashboardPage() {
           </CardContent>
         </Card>
 
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between pb-2 border-none">
-            <CardTitle className="text-xs uppercase font-bold text-slate-500">Sales & Orders</CardTitle>
-            <TrendingUp className="w-4 h-4 text-slate-400" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-black text-slate-900">Phase 5</div>
-            <p className="text-xs text-slate-500 mt-1">Order workflow activates in Phase 5</p>
-          </CardContent>
-        </Card>
+        <Link href="/vendor/orders" className="block">
+          <Card className="hover:border-brand-300 transition-colors h-full">
+            <CardHeader className="flex flex-row items-center justify-between pb-2 border-none">
+              <CardTitle className="text-xs uppercase font-bold text-slate-500">Sales & Orders</CardTitle>
+              <TrendingUp className="w-4 h-4 text-brand-600" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-black text-brand-600 flex items-center justify-between">
+                <span>View Orders</span>
+                <ArrowRight className="w-4 h-4 text-slate-400" />
+              </div>
+              <p className="text-xs text-slate-500 mt-1">Review & fulfill customer sub-orders</p>
+            </CardContent>
+          </Card>
+        </Link>
       </div>
 
       {/* Quick Navigation Cards */}

@@ -5,6 +5,7 @@ import { Badge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
 import { MapPin, Scale, Store, ArrowRight, CheckCircle2 } from 'lucide-react';
 import type { SearchProductItem } from '@/domain/search/query';
+import { AddToCartButton } from '@/components/cart/AddToCartButton';
 
 interface ProductCardProps {
   product: SearchProductItem;
@@ -102,8 +103,10 @@ export function ProductCard({ product }: ProductCardProps) {
             </div>
           </div>
 
-          {/* Action Trigger */}
-          <div className="pt-1">
+          {/* Action Triggers */}
+          <div className="pt-1 space-y-2">
+            <AddToCartButton product={product} />
+
             <Link href={`/marketplace/compare?productId=${product.id}`} className="w-full block">
               <Button
                 variant="outline"

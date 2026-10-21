@@ -281,7 +281,15 @@ export interface Database {
           contact_phone?: string;
           order_notes?: string | null;
         };
-        Relationships: [];
+        Relationships: [
+          {
+            foreignKeyName: "customer_orders_customer_id_fkey";
+            columns: ["customer_id"];
+            isOneToOne: false;
+            referencedRelation: "profiles";
+            referencedColumns: ["id"];
+          }
+        ];
       };
       vendor_orders: {
         Row: {
@@ -307,7 +315,22 @@ export interface Database {
           status?: OrderStatus;
           updated_at?: string;
         };
-        Relationships: [];
+        Relationships: [
+          {
+            foreignKeyName: "vendor_orders_customer_order_id_fkey";
+            columns: ["customer_order_id"];
+            isOneToOne: false;
+            referencedRelation: "customer_orders";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "vendor_orders_vendor_id_fkey";
+            columns: ["vendor_id"];
+            isOneToOne: false;
+            referencedRelation: "vendor_stores";
+            referencedColumns: ["id"];
+          }
+        ];
       };
       order_items: {
         Row: {
@@ -336,7 +359,22 @@ export interface Database {
           quantity?: number;
           line_total?: number;
         };
-        Relationships: [];
+        Relationships: [
+          {
+            foreignKeyName: "order_items_vendor_order_id_fkey";
+            columns: ["vendor_order_id"];
+            isOneToOne: false;
+            referencedRelation: "vendor_orders";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "order_items_product_id_fkey";
+            columns: ["product_id"];
+            isOneToOne: false;
+            referencedRelation: "products";
+            referencedColumns: ["id"];
+          }
+        ];
       };
       order_status_history: {
         Row: {
@@ -361,7 +399,22 @@ export interface Database {
           to_status?: OrderStatus;
           note?: string | null;
         };
-        Relationships: [];
+        Relationships: [
+          {
+            foreignKeyName: "order_status_history_vendor_order_id_fkey";
+            columns: ["vendor_order_id"];
+            isOneToOne: false;
+            referencedRelation: "vendor_orders";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "order_status_history_changed_by_fkey";
+            columns: ["changed_by"];
+            isOneToOne: false;
+            referencedRelation: "profiles";
+            referencedColumns: ["id"];
+          }
+        ];
       };
       shopping_lists: {
         Row: {
@@ -382,7 +435,15 @@ export interface Database {
           title?: string;
           updated_at?: string;
         };
-        Relationships: [];
+        Relationships: [
+          {
+            foreignKeyName: "shopping_lists_user_id_fkey";
+            columns: ["user_id"];
+            isOneToOne: false;
+            referencedRelation: "profiles";
+            referencedColumns: ["id"];
+          }
+        ];
       };
       shopping_list_items: {
         Row: {
@@ -409,7 +470,22 @@ export interface Database {
           target_quantity?: number;
           target_unit?: UnitOfMeasure;
         };
-        Relationships: [];
+        Relationships: [
+          {
+            foreignKeyName: "shopping_list_items_list_id_fkey";
+            columns: ["list_id"];
+            isOneToOne: false;
+            referencedRelation: "shopping_lists";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "shopping_list_items_category_id_fkey";
+            columns: ["category_id"];
+            isOneToOne: false;
+            referencedRelation: "categories";
+            referencedColumns: ["id"];
+          }
+        ];
       };
       admin_audit_logs: {
         Row: {

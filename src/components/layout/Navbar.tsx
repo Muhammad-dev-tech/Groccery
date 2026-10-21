@@ -3,14 +3,14 @@
 import * as React from 'react';
 import Link from 'next/link';
 import type { User as AuthUser } from '@supabase/supabase-js';
-import { ShoppingBag, Store, Shield, User, Menu, X, LogOut } from 'lucide-react';
+import { ShoppingBag, Store, Shield, User, Menu, X, LogOut, ClipboardList, PackageCheck } from 'lucide-react';
 import { createClient } from '@/lib/supabase/client';
 import type { UserRole } from '@/types/database.types';
 import { LocationSelector } from './LocationSelector';
+import { CartNavButton } from '@/components/cart/CartNavButton';
 
 /**
  * Only links to routes that exist in the current phase are shown.
- * Marketplace, cart, and shopping-list links are added in their respective phases.
  */
 export function Navbar() {
   const [mobileOpen, setMobileOpen] = React.useState(false);
@@ -43,20 +43,26 @@ export function Navbar() {
 
   const roleLinks = (
     <>
+      <Link id="nav-lists" href="/lists" onClick={() => setMobileOpen(false)} className="flex items-center gap-1.5 text-xs font-semibold px-2.5 py-1.5 rounded-lg text-slate-700 hover:text-brand-700 hover:bg-slate-50">
+        <ClipboardList className="w-3.5 h-3.5 text-brand-600" aria-hidden /> Lists
+      </Link>
+      <Link id="nav-orders" href="/orders" onClick={() => setMobileOpen(false)} className="flex items-center gap-1.5 text-xs font-semibold px-2.5 py-1.5 rounded-lg text-slate-700 hover:text-brand-700 hover:bg-slate-50">
+        <PackageCheck className="w-3.5 h-3.5 text-slate-500" aria-hidden /> Orders
+      </Link>
       {role === 'admin' && (
-        <Link id="nav-admin" href="/admin" onClick={() => setMobileOpen(false)} className="flex items-center gap-1.5 text-xs font-semibold px-3 py-2 rounded-lg bg-purple-50 text-purple-700 border border-purple-200 hover:bg-purple-100">
+        <Link id="nav-admin" href="/admin" onClick={() => setMobileOpen(false)} className="flex items-center gap-1.5 text-xs font-semibold px-2.5 py-1.5 rounded-lg bg-purple-50 text-purple-700 border border-purple-200 hover:bg-purple-100">
           <Shield className="w-3.5 h-3.5" aria-hidden /> Admin
         </Link>
       )}
       {(role === 'vendor' || role === 'admin') && (
-        <Link id="nav-vendor" href="/vendor/dashboard" onClick={() => setMobileOpen(false)} className="flex items-center gap-1.5 text-xs font-semibold px-3 py-2 rounded-lg bg-brand-50 text-brand-700 border border-brand-200 hover:bg-brand-100">
+        <Link id="nav-vendor" href="/vendor/dashboard" onClick={() => setMobileOpen(false)} className="flex items-center gap-1.5 text-xs font-semibold px-2.5 py-1.5 rounded-lg bg-brand-50 text-brand-700 border border-brand-200 hover:bg-brand-100">
           <Store className="w-3.5 h-3.5" aria-hidden /> Vendor Hub
         </Link>
       )}
-      <Link id="nav-account" href="/account" onClick={() => setMobileOpen(false)} className="flex items-center gap-1.5 text-xs font-semibold px-3 py-2 rounded-lg border border-slate-200 text-slate-700 hover:bg-slate-50">
+      <Link id="nav-account" href="/account" onClick={() => setMobileOpen(false)} className="flex items-center gap-1.5 text-xs font-semibold px-2.5 py-1.5 rounded-lg border border-slate-200 text-slate-700 hover:bg-slate-50">
         <User className="w-3.5 h-3.5" aria-hidden /> Account
       </Link>
-      <button id="nav-signout" type="button" onClick={handleSignOut} className="flex items-center gap-1.5 text-xs font-semibold px-3 py-2 rounded-lg text-slate-500 hover:text-red-600 hover:bg-red-50">
+      <button id="nav-signout" type="button" onClick={handleSignOut} className="flex items-center gap-1.5 text-xs font-semibold px-2.5 py-1.5 rounded-lg text-slate-500 hover:text-red-600 hover:bg-red-50">
         <LogOut className="w-3.5 h-3.5" aria-hidden /> Sign out
       </button>
     </>
@@ -79,7 +85,7 @@ export function Navbar() {
   return (
     <header className="sticky top-0 z-40 w-full border-b border-slate-200/80 bg-white/90 backdrop-blur-md">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between h-16">
-        <div className="flex items-center gap-6">
+        <div className="flex items-center gap-4 sm:gap-6">
           <Link href="/" className="flex items-center gap-2 group" aria-label="FreshGrocer home">
             <div className="w-10 h-10 rounded-xl bg-brand-600 flex items-center justify-center text-white shadow-sm group-hover:bg-brand-700 transition-colors">
               <ShoppingBag className="w-5 h-5" aria-hidden />
@@ -103,19 +109,23 @@ export function Navbar() {
         </div>
 
         <nav aria-label="Primary" className="hidden md:flex items-center gap-2">
+          <CartNavButton />
           {user ? roleLinks : guestLinks}
         </nav>
 
-        <button
-          type="button"
-          onClick={() => setMobileOpen((o) => !o)}
-          className="md:hidden p-2 rounded-lg text-slate-600 hover:bg-slate-100"
-          aria-label="Toggle menu"
-          aria-expanded={mobileOpen}
-          aria-controls="mobile-nav"
-        >
-          {mobileOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
-        </button>
+        <div className="flex md:hidden items-center gap-2">
+          <CartNavButton onClick={() => setMobileOpen(false)} />
+          <button
+            type="button"
+            onClick={() => setMobileOpen((o) => !o)}
+            className="p-2 rounded-lg text-slate-600 hover:bg-slate-100"
+            aria-label="Toggle menu"
+            aria-expanded={mobileOpen}
+            aria-controls="mobile-nav"
+          >
+            {mobileOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+          </button>
+        </div>
       </div>
 
       {mobileOpen && (
