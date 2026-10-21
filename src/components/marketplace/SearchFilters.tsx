@@ -227,13 +227,13 @@ export function SearchFilters({ categories, vendors }: SearchFiltersProps) {
         <form onSubmit={handlePriceFilterSubmit} className="sm:col-span-2 flex items-end gap-2">
           <div className="flex-1">
             <label className="block text-[11px] font-semibold text-slate-600 uppercase mb-1">
-              Min Price ($)
+              Min Price
             </label>
             <input
               type="number"
               min="0"
-              step="0.5"
-              placeholder="0.00"
+              step="1"
+              placeholder="0"
               value={minPrice}
               onChange={(e) => setMinPrice(e.target.value)}
               className="w-full rounded-xl border border-slate-200 bg-white py-1.5 px-3 text-xs text-slate-700 focus:border-brand-500 focus:outline-none"
@@ -241,13 +241,13 @@ export function SearchFilters({ categories, vendors }: SearchFiltersProps) {
           </div>
           <div className="flex-1">
             <label className="block text-[11px] font-semibold text-slate-600 uppercase mb-1">
-              Max Price ($)
+              Max Price
             </label>
             <input
               type="number"
               min="0"
-              step="0.5"
-              placeholder="50.00"
+              step="1"
+              placeholder="50000"
               value={maxPrice}
               onChange={(e) => setMaxPrice(e.target.value)}
               className="w-full rounded-xl border border-slate-200 bg-white py-1.5 px-3 text-xs text-slate-700 focus:border-brand-500 focus:outline-none"

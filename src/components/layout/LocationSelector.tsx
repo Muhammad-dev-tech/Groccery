@@ -137,7 +137,7 @@ export function LocationSelector() {
                 <Search className="w-3.5 h-3.5 text-slate-400 absolute left-2.5 top-1/2 -translate-y-1/2" />
                 <input
                   type="text"
-                  placeholder="e.g. 62701, 60601"
+                  placeholder="e.g. 700213, 700241"
                   value={postalInput}
                   onChange={(e) => setPostalInput(e.target.value)}
                   className="w-full rounded-xl border border-slate-200 pl-8 pr-2 py-1.5 text-xs text-slate-800 placeholder-slate-400 focus:border-brand-500 focus:outline-none"

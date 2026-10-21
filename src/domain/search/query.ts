@@ -1,4 +1,6 @@
 import { createClient } from '@/lib/supabase/server';
+import { isSupabaseConfigured } from '@/lib/env';
+import { getDemoProducts } from './demoData';
 import { calculateNormalizedPrice } from '@/domain/units/normalizer';
 import { evaluateLocationCoverage } from '@/domain/location/service';
 import {
@@ -25,6 +27,11 @@ export async function searchMarketplaceProducts(
   rawFilters: Partial<SearchFilterInput>
 ): Promise<SearchResult> {
   const parsed = searchFilterSchema.parse(rawFilters);
+
+  if (!isSupabaseConfigured()) {
+    return getDemoProducts(parsed);
+  }
+
   const supabase = await createClient();
 
   const isLocationFiltered = Boolean(parsed.postalCode || parsed.city);
@@ -154,15 +161,10 @@ export async function searchMarketplaceProducts(
   const { data, count, error } = await query;
 
   if (error) {
-    console.error('[searchMarketplaceProducts] query failed', error);
-    return {
-      products: [],
-      totalCount: 0,
-      page: parsed.page,
-      limit: parsed.limit,
-      totalPages: 0,
-      filtersApplied: parsed,
-    };
+    if (isSupabaseConfigured()) {
+      console.error('[searchMarketplaceProducts] query failed', error);
+    }
+    return getDemoProducts(parsed);
   }
 
   const totalCount = count || 0;

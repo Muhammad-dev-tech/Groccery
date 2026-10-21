@@ -103,38 +103,38 @@ export default function RegisterVendorPage() {
                   label="Store Name"
                   name="storeName"
                   required
-                  placeholder="e.g. Green Valley Fresh Market"
+                  placeholder="e.g. Dawanau Grain Mart or Kwari Provisions"
                 />
                 <Input
                   label="Store Contact Phone"
                   name="contactPhone"
                   type="tel"
                   required
-                  placeholder="+1 (555) 345-6789"
+                  placeholder="+234 802 345 6789"
                 />
                 <Input
                   label="Store Address"
                   name="address"
                   required
-                  placeholder="124 Organic Avenue, Suite 10"
+                  placeholder="e.g. 45 Murtala Mohammed Way, Kano"
                 />
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                   <Input
                     label="City"
                     name="city"
                     required
-                    placeholder="Springfield"
+                    placeholder="Kano"
                   />
                   <Input
                     label="State / Region"
                     name="state"
                     required
-                    placeholder="IL"
+                    placeholder="Kano"
                   />
                   <Input
                     label="Postal Code"
                     name="postalCode"
-                    placeholder="62701"
+                    placeholder="700241"
                   />
                 </div>
               </div>

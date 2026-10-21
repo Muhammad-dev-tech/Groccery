@@ -49,6 +49,9 @@ export interface ProductComparisonResult {
   totalVendorsOfferingCategory: number;
 }
 
+import { isSupabaseConfigured } from '@/lib/env';
+import { RAW_DEMO_PRODUCTS } from '@/domain/search/demoData';
+
 /**
  * Finds equivalent products across independent vendors and calculates
  * verified, dimension-safe normalized unit price comparisons.
@@ -56,6 +59,102 @@ export interface ProductComparisonResult {
 export async function compareProductAcrossVendors(
   targetProductId: string
 ): Promise<ProductComparisonResult | null> {
+  if (!isSupabaseConfigured()) {
+    const target = RAW_DEMO_PRODUCTS.find((p) => p.id === targetProductId);
+    if (!target) return null;
+
+    const targetNormalized = calculateNormalizedPrice(
+      target.price,
+      target.packageQuantity,
+      target.unitOfMeasurement
+    );
+
+    const candidates = RAW_DEMO_PRODUCTS.filter(
+      (p) => p.categoryId === target.categoryId && p.id !== target.id
+    );
+
+    let lowestPricePerBaseUnit = targetNormalized.normalizedPricePerBaseUnit;
+    let bestValueVendor = target.vendorName;
+
+    const evaluatedCandidates: ComparisonCandidate[] = candidates.map((c) => {
+      const comparable = areUnitsComparable(target.unitOfMeasurement, c.unitOfMeasurement);
+      if (!comparable) {
+        return {
+          id: c.id,
+          vendorId: c.vendorId,
+          vendorName: c.vendorName,
+          vendorCity: c.vendorCity,
+          vendorState: c.vendorState,
+          name: c.name,
+          price: c.price,
+          currency: c.currency,
+          packageQuantity: c.packageQuantity,
+          unitOfMeasurement: c.unitOfMeasurement,
+          stockQuantity: c.stockQuantity,
+          isAvailable: c.isAvailable,
+          imageUrl: c.imageUrl,
+          isComparable: false,
+          incompatibilityReason: `Incompatible units (${target.unitOfMeasurement} vs ${c.unitOfMeasurement}): mass and volume cannot be compared directly.`,
+        };
+      }
+
+      const normalized = calculateNormalizedPrice(c.price, c.packageQuantity, c.unitOfMeasurement);
+      if (normalized.normalizedPricePerBaseUnit < lowestPricePerBaseUnit) {
+        lowestPricePerBaseUnit = normalized.normalizedPricePerBaseUnit;
+        bestValueVendor = c.vendorName;
+      }
+
+      const diff =
+        ((targetNormalized.normalizedPricePerBaseUnit - normalized.normalizedPricePerBaseUnit) /
+          targetNormalized.normalizedPricePerBaseUnit) *
+        100;
+
+      return {
+        id: c.id,
+        vendorId: c.vendorId,
+        vendorName: c.vendorName,
+        vendorCity: c.vendorCity,
+        vendorState: c.vendorState,
+        name: c.name,
+        price: c.price,
+        currency: c.currency,
+        packageQuantity: c.packageQuantity,
+        unitOfMeasurement: c.unitOfMeasurement,
+        stockQuantity: c.stockQuantity,
+        isAvailable: c.isAvailable,
+        imageUrl: c.imageUrl,
+        isComparable: true,
+        normalizedPrice: normalized,
+        isBestValue: normalized.normalizedPricePerBaseUnit <= lowestPricePerBaseUnit,
+        savingsPercentageVsTarget: diff > 0 ? Math.round(diff * 10) / 10 : undefined,
+      };
+    });
+
+    const isTargetBest = targetNormalized.normalizedPricePerBaseUnit <= lowestPricePerBaseUnit;
+
+    return {
+      targetProduct: {
+        id: target.id,
+        name: target.name,
+        vendorName: target.vendorName,
+        vendorCity: target.vendorCity,
+        vendorState: target.vendorState,
+        categoryName: target.categoryName,
+        price: target.price,
+        currency: target.currency,
+        packageQuantity: target.packageQuantity,
+        unitOfMeasurement: target.unitOfMeasurement,
+        stockQuantity: target.stockQuantity,
+        imageUrl: target.imageUrl,
+        normalizedPrice: targetNormalized,
+      },
+      equivalentProducts: evaluatedCandidates,
+      bestValueVendorName: isTargetBest ? target.vendorName : bestValueVendor,
+      lowestNormalizedPriceFormatted: `$${lowestPricePerBaseUnit.toFixed(2)} / ${targetNormalized.baseUnit}`,
+      totalVendorsOfferingCategory: candidates.length + 1,
+    };
+  }
+
   const supabase = await createClient();
 
   // 1. Fetch target product with category and vendor

@@ -120,7 +120,7 @@ export default function CheckoutPage() {
                   id="address"
                   type="text"
                   required
-                  placeholder="e.g. 104 Green Grove Way, Apt 3B, Springfield, IL 62701"
+                  placeholder="e.g. 14 Bompai Road, Nassarawa GRA, Kano 700213"
                   value={deliveryAddress}
                   onChange={(e) => setDeliveryAddress(e.target.value)}
                   disabled={loading}
@@ -138,7 +138,7 @@ export default function CheckoutPage() {
                     id="phone"
                     type="tel"
                     required
-                    placeholder="+1 555-0101"
+                    placeholder="+234 803 123 4567"
                     value={contactPhone}
                     onChange={(e) => setContactPhone(e.target.value)}
                     disabled={loading}
@@ -152,14 +152,14 @@ export default function CheckoutPage() {
 
               <div>
                 <label htmlFor="notes" className="block text-xs font-semibold text-slate-700 mb-1">
-                  Delivery Notes / Gate Code (Optional)
+                  Delivery Notes / Gate Instructions (Optional)
                 </label>
                 <div className="relative">
                   <FileText className="w-4 h-4 text-slate-400 absolute left-3 top-3" />
                   <textarea
                     id="notes"
                     rows={2}
-                    placeholder="e.g. Ring buzzer 4, leave on porch if not home"
+                    placeholder="e.g. Call upon arrival at gate, opposite neighborhood mosque"
                     value={orderNotes}
                     onChange={(e) => setOrderNotes(e.target.value)}
                     disabled={loading}

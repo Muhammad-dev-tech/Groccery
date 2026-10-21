@@ -49,7 +49,7 @@ export function ServiceAreaForm({ defaultCity, defaultState, disabled }: Service
           type="text"
           required
           disabled={disabled || isPending}
-          placeholder="e.g. Downtown, North Shore"
+          placeholder="e.g. Nassarawa GRA, Sabon Gari, Kurmi Market"
           className="w-full rounded-xl border border-slate-200 py-2 px-3 text-xs text-slate-800 placeholder-slate-400 focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500"
         />
         <p className="text-[11px] text-slate-500 mt-1">
@@ -98,7 +98,7 @@ export function ServiceAreaForm({ defaultCity, defaultState, disabled }: Service
           name="postalCode"
           type="text"
           disabled={disabled || isPending}
-          placeholder="e.g. 62701, SW1A 1AA"
+          placeholder="e.g. 700213, 700241, 700221"
           className="w-full rounded-xl border border-slate-200 py-2 px-3 text-xs text-slate-800 placeholder-slate-400 focus:border-brand-500 focus:outline-none"
         />
         <p className="text-[11px] text-slate-500 mt-1">

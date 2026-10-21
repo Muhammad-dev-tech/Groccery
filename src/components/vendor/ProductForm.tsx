@@ -142,14 +142,14 @@ export function ProductForm({ categories, initialData, onSuccess, onCancel }: Pr
 
             <div>
               <Input
-                label="Listed Price ($)"
+                label="Listed Price (₦ / Currency)"
                 name="price"
                 type="number"
                 step="0.01"
                 min="0"
                 required
                 defaultValue={initialData?.price ?? ''}
-                placeholder="4.99"
+                placeholder="4500"
               />
             </div>
 

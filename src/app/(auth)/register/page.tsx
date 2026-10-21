@@ -59,7 +59,7 @@ export default function RegisterCustomerPage() {
               label="Full Name"
               name="fullName"
               required
-              placeholder="e.g. Sarah Jenkins"
+              placeholder="e.g. Amina Bello or Ibrahim Garba"
               autoComplete="name"
             />
 
@@ -76,7 +76,7 @@ export default function RegisterCustomerPage() {
               label="Phone Number (Optional)"
               name="phone"
               type="tel"
-              placeholder="+1 (555) 000-0000"
+              placeholder="+234 803 123 4567"
               autoComplete="tel"
             />
 

@@ -1,6 +1,7 @@
 import { Suspense } from 'react';
 import { createClient } from '@/lib/supabase/server';
 import { searchMarketplaceProducts, type SearchFilterInput } from '@/domain/search/query';
+import { DEMO_CATEGORIES, DEMO_VENDORS } from '@/domain/search/demoData';
 import { ProductCard } from '@/components/marketplace/ProductCard';
 import { SearchFilters } from '@/components/marketplace/SearchFilters';
 import { Card, CardContent } from '@/components/ui/Card';
@@ -40,17 +41,28 @@ export default async function MarketplacePage({
   const supabase = await createClient();
 
   // Fetch all active categories
-  const { data: categories } = await supabase
-    .from('categories')
-    .select('id, name, icon')
-    .order('display_order');
+  let categories: Array<{ id: string; name: string; icon: string | null }> = [];
+  let vendors: Array<{ id: string; name: string; city: string }> = [];
 
-  // Fetch approved vendors for filter options
-  const { data: vendors } = await supabase
-    .from('vendor_stores')
-    .select('id, name, city')
-    .eq('status', 'approved')
-    .order('name');
+  try {
+    const { data: catData } = await supabase
+      .from('categories')
+      .select('id, name, icon')
+      .order('display_order');
+    if (catData && catData.length > 0) categories = catData;
+
+    const { data: vData } = await supabase
+      .from('vendor_stores')
+      .select('id, name, city')
+      .eq('status', 'approved')
+      .order('name');
+    if (vData && vData.length > 0) vendors = vData;
+  } catch {
+    // Ignore when offline or unconfigured
+  }
+
+  if (categories.length === 0) categories = DEMO_CATEGORIES;
+  if (vendors.length === 0) vendors = DEMO_VENDORS;
 
   // Execute marketplace query
   const searchResult = await searchMarketplaceProducts(rawFilters);

@@ -9,6 +9,7 @@ import { createClient } from '@/lib/supabase/client';
 import type { UserRole } from '@/types/database.types';
 import { LocationSelector } from './LocationSelector';
 import { CartNavButton } from '@/components/cart/CartNavButton';
+import { ThemeToggle } from '@/components/theme/ThemeToggle';
 
 /**
  * Only links to routes that exist in the current phase are shown.
@@ -112,11 +113,13 @@ export function Navbar() {
         </div>
 
         <nav aria-label="Primary" className="hidden md:flex items-center gap-2">
+          <ThemeToggle />
           <CartNavButton />
           {user ? roleLinks : guestLinks}
         </nav>
 
         <div className="flex md:hidden items-center gap-2">
+          <ThemeToggle />
           <CartNavButton onClick={() => setMobileOpen(false)} />
           <button
             type="button"
