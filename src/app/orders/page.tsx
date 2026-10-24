@@ -119,7 +119,7 @@ export default async function CustomerOrdersPage() {
                         Total
                       </span>
                       <span className="text-base font-black text-brand-600">
-                        ${order.total_amount.toFixed(2)}
+                        ₦{order.total_amount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                       </span>
                     </div>
 
@@ -154,7 +154,7 @@ export default async function CustomerOrdersPage() {
                         <div className="text-[11px] text-slate-500">
                           {so.order_items?.length || 0} item{so.order_items?.length === 1 ? '' : 's'} ·{' '}
                           <span className="font-semibold text-slate-700">
-                            ${so.subtotal.toFixed(2)}
+                            ₦{so.subtotal.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                           </span>
                         </div>
                       </div>

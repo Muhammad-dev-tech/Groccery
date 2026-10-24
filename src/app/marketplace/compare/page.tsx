@@ -127,7 +127,7 @@ export default async function ProductComparisonPage({
 
             <div className="text-right sm:border-l sm:border-slate-200 sm:pl-6 space-y-1">
               <div className="text-2xl font-black text-slate-900">
-                ${targetProduct.price.toFixed(2)}
+                ₦{targetProduct.price.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
               </div>
               <div className="text-xs text-slate-500">
                 Pack: {targetProduct.packageQuantity} {targetProduct.unitOfMeasurement}
@@ -190,7 +190,7 @@ export default async function ProductComparisonPage({
                     <div className="flex items-baseline justify-between">
                       <span className="text-xs text-slate-500">Listed Price:</span>
                       <span className="text-lg font-black text-slate-900">
-                        ${cand.price.toFixed(2)}
+                        ₦{cand.price.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                       </span>
                     </div>
 

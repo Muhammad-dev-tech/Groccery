@@ -7,21 +7,21 @@ describe('Unit Normalizer Engine', () => {
     const result = calculateNormalizedPrice(2.50, 500, 'g');
     expect(result.baseUnit).toBe('kg');
     expect(result.normalizedPricePerBaseUnit).toBe(5.00);
-    expect(result.formattedComparison).toBe('$5.00 / kg');
+    expect(result.formattedComparison).toBe('₦5.00 / kg');
   });
 
   it('normalizes 2kg package correctly to price per kg', () => {
     const result = calculateNormalizedPrice(8.00, 2, 'kg');
     expect(result.baseUnit).toBe('kg');
     expect(result.normalizedPricePerBaseUnit).toBe(4.00);
-    expect(result.formattedComparison).toBe('$4.00 / kg');
+    expect(result.formattedComparison).toBe('₦4.00 / kg');
   });
 
   it('normalizes 750ml bottle correctly to price per litre', () => {
     const result = calculateNormalizedPrice(3.75, 750, 'ml');
     expect(result.baseUnit).toBe('l');
     expect(result.normalizedPricePerBaseUnit).toBe(5.00);
-    expect(result.formattedComparison).toBe('$5.00 / l');
+    expect(result.formattedComparison).toBe('₦5.00 / l');
   });
 
   it('enforces dimension comparability checks', () => {

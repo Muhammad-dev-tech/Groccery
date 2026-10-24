@@ -57,7 +57,7 @@ export function calculateNormalizedPrice(
     baseUnit: def.baseUnit,
     normalizedPricePerBaseUnit: Math.round(normalizedPricePerBaseUnit * 100) / 100,
     totalQuantityInBaseUnit,
-    formattedComparison: `$${(Math.round(normalizedPricePerBaseUnit * 100) / 100).toFixed(2)} / ${def.baseUnit}`,
+    formattedComparison: `₦${(Math.round(normalizedPricePerBaseUnit * 100) / 100).toFixed(2)} / ${def.baseUnit}`,
   };
 }
 

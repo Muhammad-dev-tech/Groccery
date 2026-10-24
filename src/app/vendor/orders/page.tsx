@@ -119,7 +119,7 @@ export default async function VendorOrdersPage() {
 
                   <div className="flex items-center gap-3">
                     <span className="font-black text-sm text-slate-900">
-                      ${order.subtotal.toFixed(2)}
+                      ₦{order.subtotal.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                     </span>
                     <OrderStatusUpdater
                       vendorOrderId={order.id}
@@ -160,7 +160,7 @@ export default async function VendorOrdersPage() {
                           <span className="text-slate-700">{it.product_name_snapshot}</span>
                         </div>
                         <span className="font-medium text-slate-700 font-mono">
-                          ${it.line_total.toFixed(2)}
+                          ₦{it.line_total.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                         </span>
                       </div>
                     ))}

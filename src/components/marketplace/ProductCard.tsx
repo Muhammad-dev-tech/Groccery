@@ -89,9 +89,8 @@ export function ProductCard({ product }: ProductCardProps) {
         {/* Pricing Matrix */}
         <div className="pt-2 border-t border-slate-100 space-y-2">
           <div className="flex items-baseline justify-between">
-            <div className="flex items-baseline gap-1">
-              <span className="text-xl sm:text-2xl font-black text-slate-900">
-                ${product.price.toFixed(2)}
+              <span className="text-xl sm:text-2xl font-black text-slate-900 dark:text-white">
+                ₦{product.price.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
               </span>
               <span className="text-xs text-slate-500 font-normal">/ pack</span>
             </div>

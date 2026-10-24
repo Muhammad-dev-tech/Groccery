@@ -150,7 +150,7 @@ export async function compareProductAcrossVendors(
       },
       equivalentProducts: evaluatedCandidates,
       bestValueVendorName: isTargetBest ? target.vendorName : bestValueVendor,
-      lowestNormalizedPriceFormatted: `$${lowestPricePerBaseUnit.toFixed(2)} / ${targetNormalized.baseUnit}`,
+      lowestNormalizedPriceFormatted: `₦${lowestPricePerBaseUnit.toFixed(2)} / ${targetNormalized.baseUnit}`,
       totalVendorsOfferingCategory: candidates.length + 1,
     };
   }
@@ -315,7 +315,7 @@ export async function compareProductAcrossVendors(
     },
     equivalentProducts: finalCandidates,
     bestValueVendorName: bestValueVendor,
-    lowestNormalizedPriceFormatted: `$${lowestPricePerBaseUnit.toFixed(2)} / ${targetNormalized.baseUnit}`,
+    lowestNormalizedPriceFormatted: `₦${lowestPricePerBaseUnit.toFixed(2)} / ${targetNormalized.baseUnit}`,
     totalVendorsOfferingCategory: finalCandidates.length + 1,
   };
 }

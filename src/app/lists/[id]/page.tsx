@@ -185,7 +185,7 @@ export default async function ShoppingListDetailPage({
                     <CardContent className="space-y-3">
                       <div>
                         <span className="text-2xl font-black text-slate-900">
-                          ${analysis.bestSingleVendor.totalCost.toFixed(2)}
+                          ₦{analysis.bestSingleVendor.totalCost.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                         </span>
                         <span className="text-xs text-slate-500 ml-1">for available items</span>
                       </div>
@@ -220,12 +220,12 @@ export default async function ShoppingListDetailPage({
                   <CardContent className="space-y-3">
                     <div>
                       <span className="text-2xl font-black text-brand-600">
-                        ${analysis.optimalSplit.totalCost.toFixed(2)}
+                        ₦{analysis.optimalSplit.totalCost.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                       </span>
                       {analysis.optimalSplit.potentialSavingsVsSingleVendor !== undefined &&
                         analysis.optimalSplit.potentialSavingsVsSingleVendor > 0 && (
                           <span className="text-xs font-bold text-emerald-700 ml-2 bg-emerald-100/70 px-2 py-0.5 rounded-full">
-                            Save ${analysis.optimalSplit.potentialSavingsVsSingleVendor.toFixed(2)}
+                            Save ₦{analysis.optimalSplit.potentialSavingsVsSingleVendor.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                           </span>
                         )}
                     </div>
@@ -278,7 +278,7 @@ export default async function ShoppingListDetailPage({
                           )}
 
                           <span className="font-black text-sm text-slate-900 min-w-[70px] text-right">
-                            ${v.totalCost.toFixed(2)}
+                            ₦{v.totalCost.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                           </span>
                         </div>
                       </div>

@@ -107,7 +107,7 @@ export default async function OrderDetailPage({
               Total Order Amount
             </span>
             <span className="text-2xl sm:text-3xl font-black text-brand-600">
-              ${order.total_amount.toFixed(2)}
+              ₦{order.total_amount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
             </span>
           </div>
         </div>
@@ -173,7 +173,7 @@ export default async function OrderDetailPage({
                   <div className="flex items-center gap-3">
                     <Badge variant="warning">Status: {so.status}</Badge>
                     <span className="font-black text-sm text-slate-900">
-                      ${so.subtotal.toFixed(2)}
+                      ₦{so.subtotal.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                     </span>
                   </div>
                 </div>
@@ -191,12 +191,12 @@ export default async function OrderDetailPage({
                             {it.quantity}x {it.product_name_snapshot}
                           </div>
                           <div className="text-[11px] text-slate-500">
-                            ${it.unit_price_snapshot.toFixed(2)} per pack ({it.package_quantity_snapshot} {it.unit_snapshot})
+                            ₦{it.unit_price_snapshot.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })} per pack ({it.package_quantity_snapshot} {it.unit_snapshot})
                           </div>
                         </div>
 
                         <span className="font-bold text-slate-800 font-mono">
-                          ${it.line_total.toFixed(2)}
+                          ₦{it.line_total.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                         </span>
                       </div>
                     ))}
