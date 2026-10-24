@@ -87,8 +87,9 @@ export function ProductCard({ product }: ProductCardProps) {
         </div>
 
         {/* Pricing Matrix */}
-        <div className="pt-2 border-t border-slate-100 space-y-2">
+        <div className="pt-2 border-t border-slate-100 dark:border-slate-800 space-y-2">
           <div className="flex items-baseline justify-between">
+            <div className="flex items-baseline gap-1">
               <span className="text-xl sm:text-2xl font-black text-slate-900 dark:text-white">
                 ₦{product.price.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
               </span>
@@ -96,8 +97,8 @@ export function ProductCard({ product }: ProductCardProps) {
             </div>
 
             {/* Dimension-Safe Normalized Price Badge */}
-            <div className="inline-flex items-center gap-1 text-[11px] font-bold px-2 py-0.5 rounded-lg bg-emerald-50 text-emerald-800 border border-emerald-200/60" title="Normalized standard price">
-              <Scale className="w-3 h-3 text-emerald-600 shrink-0" />
+            <div className="inline-flex items-center gap-1 text-[11px] font-bold px-2 py-0.5 rounded-lg bg-emerald-50 dark:bg-emerald-950/60 text-emerald-800 dark:text-emerald-300 border border-emerald-200/60 dark:border-emerald-800/60" title="Normalized standard price">
+              <Scale className="w-3 h-3 text-emerald-600 dark:text-emerald-400 shrink-0" />
               <span>{product.normalizedPrice.formattedComparison}</span>
             </div>
           </div>
