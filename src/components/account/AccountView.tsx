@@ -54,8 +54,8 @@ export function AccountView({ user, profile }: AccountViewProps) {
 
   return (
     <div className="max-w-4xl mx-auto w-full px-4 sm:px-6 py-8 sm:py-12 space-y-8">
-      {/* Page Title */}
-      <div className="flex items-center justify-between">
+      {/* Page Title & Sign Out Action */}
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4">
         <div>
           <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight">
             My Account
@@ -69,10 +69,10 @@ export function AccountView({ user, profile }: AccountViewProps) {
           size="sm"
           onClick={handleSignOut}
           disabled={isSigningOut}
-          className="text-xs text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/30 hover:border-red-200 dark:hover:border-red-800"
+          className="self-start sm:self-auto shrink-0 whitespace-nowrap h-9 px-3.5 text-xs font-semibold text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/30 border-red-200 dark:border-red-800 rounded-xl"
         >
-          <LogOut className="w-3.5 h-3.5 mr-1.5" />
-          {isSigningOut ? 'Signing out...' : 'Sign out'}
+          <LogOut className="w-3.5 h-3.5 mr-1.5 shrink-0" />
+          <span>{isSigningOut ? 'Signing out...' : 'Sign out'}</span>
         </Button>
       </div>
 

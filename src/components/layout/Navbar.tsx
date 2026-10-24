@@ -134,7 +134,7 @@ export function Navbar() {
 
   return (
     <header className="sticky top-0 z-40 w-full border-b border-slate-200/80 dark:border-slate-800 bg-white/95 dark:bg-slate-950/95 backdrop-blur-md transition-colors">
-      <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 flex items-center justify-between h-16">
+      <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 flex items-center justify-between gap-3 h-16">
         <div className="flex items-center gap-2 sm:gap-4 min-w-0">
           <Link href="/" className="flex items-center gap-1.5 sm:gap-2 group shrink-0" aria-label="FreshGrocer home">
             <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-brand-600 flex items-center justify-center text-white shadow-sm group-hover:bg-brand-700 transition-colors">

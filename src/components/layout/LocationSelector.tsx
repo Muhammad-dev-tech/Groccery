@@ -91,18 +91,25 @@ export function LocationSelector() {
     ? currentCity
     : 'All Kano Areas';
 
+  const mobileLabel = currentPostal
+    ? currentPostal
+    : currentCity
+    ? currentCity
+    : 'Kano';
+
   return (
-    <div className="relative" ref={modalRef}>
+    <div className="relative shrink-0" ref={modalRef}>
       <button
         id="location-picker-btn"
         type="button"
         onClick={() => setIsOpen(!isOpen)}
-        className="h-9 inline-flex items-center gap-1 sm:gap-1.5 text-xs font-semibold px-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200 transition-colors shadow-2xs"
+        className="h-9 inline-flex items-center gap-1 sm:gap-1.5 text-xs font-semibold px-2 sm:px-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200 transition-colors shadow-2xs"
         aria-label="Select Delivery Location"
         aria-expanded={isOpen}
       >
         <MapPin className="w-3.5 h-3.5 text-brand-600 dark:text-brand-400 shrink-0" />
-        <span className="max-w-[75px] sm:max-w-[130px] truncate text-slate-800 dark:text-slate-200">{activeLabel}</span>
+        <span className="sm:hidden text-slate-800 dark:text-slate-200 text-[11px] font-bold">{mobileLabel}</span>
+        <span className="hidden sm:inline max-w-[130px] truncate text-slate-800 dark:text-slate-200">{activeLabel}</span>
         <ChevronDown className="w-3 h-3 text-slate-400 shrink-0" />
       </button>
 
