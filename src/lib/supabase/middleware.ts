@@ -1,6 +1,6 @@
 import { createServerClient } from '@supabase/ssr';
 import { NextResponse, type NextRequest } from 'next/server';
-import type { Database, UserRole } from '@/types/database.types';
+import type { Database, UserRole, Profile } from '@/types/database.types';
 import { getPublicEnv } from '@/lib/env';
 
 /** Routes reachable without signing in even though they live under a protected prefix. */
@@ -52,11 +52,11 @@ export async function updateSession(request: NextRequest) {
   if (roleRule) {
     if (!user) return redirectTo(request, '/login', true);
 
-    const { data: profile } = await supabase
+    const { data: profile } = (await supabase
       .from('profiles')
-      .select('role')
+      .select('*')
       .eq('id', user.id)
-      .single();
+      .single()) as { data: Profile | null; error: any };
 
     if (!profile || !roleRule.allowed.includes(profile.role)) {
       return redirectTo(request, '/');

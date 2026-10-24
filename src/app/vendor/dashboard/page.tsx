@@ -4,7 +4,7 @@ import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/com
 import { Badge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
 import { Store, Clock, CheckCircle2, XCircle, PauseCircle, Package, AlertTriangle, ArrowRight, TrendingUp } from 'lucide-react';
-import type { StoreStatus } from '@/types/database.types';
+import type { StoreStatus, Profile } from '@/types/database.types';
 import Link from 'next/link';
 
 export const metadata = { title: 'Vendor Hub — FreshGrocer' };
@@ -23,7 +23,11 @@ export default async function VendorDashboardPage() {
   } = await supabase.auth.getUser();
   if (!user) redirect('/login?redirectTo=/vendor/dashboard');
 
-  const { data: profile } = await supabase.from('profiles').select('role, full_name').eq('id', user.id).single();
+  const { data: profile } = (await supabase
+    .from('profiles')
+    .select('*')
+    .eq('id', user.id)
+    .single()) as { data: Profile | null; error: any };
   if (!profile || (profile.role !== 'vendor' && profile.role !== 'admin')) redirect('/');
 
   const { data: store } = await supabase

@@ -3,6 +3,7 @@
 import { revalidatePath } from 'next/cache';
 import { createClient } from '@/lib/supabase/server';
 import { updateOrderStatusSchema, type UpdateOrderStatusInput } from '@/lib/validations/order';
+import type { Profile } from '@/types/database.types';
 
 export async function updateVendorOrderStatusAction(input: UpdateOrderStatusInput) {
   const supabase = await createClient();
@@ -38,11 +39,11 @@ export async function updateVendorOrderStatusAction(input: UpdateOrderStatusInpu
     return { error: 'Vendor order not found.' };
   }
 
-  const { data: profile } = await supabase
+  const { data: profile } = (await supabase
     .from('profiles')
-    .select('role')
+    .select('*')
     .eq('id', user.id)
-    .single();
+    .single()) as { data: Profile | null; error: any };
 
   const isStoreOwner = (vOrder.vendor as any)?.owner_id === user.id;
   const isAdmin = profile?.role === 'admin';

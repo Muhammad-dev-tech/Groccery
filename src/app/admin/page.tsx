@@ -5,6 +5,7 @@ import { Badge } from '@/components/ui/Badge';
 import { AssignAdminForm } from '@/components/admin/AssignAdminForm';
 import { StoreModerationTable, type AdminStoreRow } from '@/components/admin/StoreModerationTable';
 import { Shield, Users, Store, Activity, AlertCircle } from 'lucide-react';
+import type { Profile } from '@/types/database.types';
 
 export const metadata = { title: 'Platform Administration — FreshGrocer' };
 
@@ -19,22 +20,22 @@ export default async function AdminDashboardPage() {
   }
 
   // Authoritative server-side check
-  const { data: profile } = await supabase
+  const { data: profile } = (await supabase
     .from('profiles')
-    .select('role, full_name')
+    .select('*')
     .eq('id', user.id)
-    .single();
+    .single()) as { data: Profile | null; error: any };
 
   if (!profile || profile.role !== 'admin') {
     redirect('/?unauthorized=admin');
   }
 
   // Fetch registered users
-  const { data: usersList } = await supabase
+  const { data: usersList } = (await supabase
     .from('profiles')
     .select('*')
     .order('created_at', { ascending: false })
-    .limit(10);
+    .limit(10)) as { data: Profile[] | null; error: any };
 
   // Fetch vendor stores with owner details
   const { data: storesList } = await supabase

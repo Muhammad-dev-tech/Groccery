@@ -3,6 +3,7 @@
 import { createClient, createAdminClient } from '@/lib/supabase/server';
 import { updateStoreStatusSchema } from '@/lib/validations/product';
 import { revalidatePath } from 'next/cache';
+import type { Profile } from '@/types/database.types';
 
 export interface AdminStoreActionResult {
   success: boolean;
@@ -27,11 +28,11 @@ export async function adminUpdateStoreStatusAction(
   }
 
   // 1. Authoritative check that caller is an administrator
-  const { data: callerProfile } = await supabase
+  const { data: callerProfile } = (await supabase
     .from('profiles')
-    .select('role')
+    .select('*')
     .eq('id', caller.id)
-    .single();
+    .single()) as { data: Profile | null; error: any };
 
   if (!callerProfile || callerProfile.role !== 'admin') {
     return {

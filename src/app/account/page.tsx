@@ -5,6 +5,7 @@ import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/com
 import { Badge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
 import { User, PackageCheck, ClipboardList, Store, ShoppingBag } from 'lucide-react';
+import type { Profile } from '@/types/database.types';
 
 export const metadata = { title: 'My Account — FreshGrocer' };
 
@@ -15,11 +16,11 @@ export default async function AccountPage() {
   } = await supabase.auth.getUser();
   if (!user) redirect('/login?redirectTo=/account');
 
-  const { data: profile, error } = await supabase
+  const { data: profile, error } = (await supabase
     .from('profiles')
-    .select('full_name, phone, role, created_at')
+    .select('*')
     .eq('id', user.id)
-    .single();
+    .single()) as { data: Profile | null; error: any };
 
   return (
     <div className="max-w-3xl mx-auto w-full px-4 py-10 space-y-6">

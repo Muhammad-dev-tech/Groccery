@@ -12,6 +12,7 @@ import {
 } from '@/lib/validations/auth';
 import { revalidatePath } from 'next/cache';
 import { getPublicEnv } from '@/lib/env';
+import type { Profile } from '@/types/database.types';
 
 export interface ActionResponse {
   success: boolean;
@@ -48,11 +49,11 @@ export async function signInAction(formData: FormData): Promise<ActionResponse> 
   }
 
   // Retrieve user profile to determine landing dashboard
-  const { data: profile } = await supabase
+  const { data: profile } = (await supabase
     .from('profiles')
-    .select('role')
+    .select('*')
     .eq('id', data.user.id)
-    .single();
+    .single()) as { data: Profile | null; error: any };
 
   let destination = '/';
   if (profile?.role === 'admin') {
@@ -381,11 +382,11 @@ export async function assignAdminRoleAction(formData: FormData): Promise<ActionR
   }
 
   // 1. Verify caller is an active admin
-  const { data: callerProfile } = await supabase
+  const { data: callerProfile } = (await supabase
     .from('profiles')
-    .select('role')
+    .select('*')
     .eq('id', caller.id)
-    .single();
+    .single()) as { data: Profile | null; error: any };
 
   if (callerProfile?.role !== 'admin') {
     return {

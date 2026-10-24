@@ -11,7 +11,16 @@ export type StoreStatus = 'pending' | 'approved' | 'rejected' | 'suspended';
 export type UnitOfMeasure = 'kg' | 'g' | 'l' | 'ml' | 'piece' | 'pack' | 'bundle';
 export type OrderStatus = 'pending' | 'accepted' | 'preparing' | 'ready' | 'completed' | 'cancelled' | 'rejected';
 
-export interface Database {
+export type Profile = {
+  id: string;
+  role: UserRole;
+  full_name: string;
+  phone: string | null;
+  created_at: string;
+  updated_at: string;
+};
+
+export type Database = {
   public: {
     Tables: {
       profiles: {

@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation';
 import type { User as AuthUser } from '@supabase/supabase-js';
 import { ShoppingBag, Store, Shield, User, Menu, X, LogOut, ClipboardList, PackageCheck } from 'lucide-react';
 import { createClient } from '@/lib/supabase/client';
-import type { UserRole } from '@/types/database.types';
+import type { UserRole, Profile } from '@/types/database.types';
 import { LocationSelector } from './LocationSelector';
 import { CartNavButton } from '@/components/cart/CartNavButton';
 import { ThemeToggle } from '@/components/theme/ThemeToggle';
@@ -25,7 +25,11 @@ export function Navbar() {
         setRole(null);
         return;
       }
-      const { data } = await supabase.from('profiles').select('role').eq('id', u.id).single();
+      const { data } = (await supabase
+        .from('profiles')
+        .select('*')
+        .eq('id', u.id)
+        .single()) as { data: Profile | null; error: any };
       setRole(data?.role ?? null);
     }
 

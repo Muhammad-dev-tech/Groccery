@@ -7,6 +7,7 @@ import { ProductForm } from '@/components/vendor/ProductForm';
 import { Store, Plus, X, AlertTriangle, Package, Check, EyeOff, Trash2 } from 'lucide-react';
 import { toggleProductAvailabilityAction, archiveProductAction } from './actions';
 import Link from 'next/link';
+import type { Profile } from '@/types/database.types';
 
 export const metadata = { title: 'Product Inventory — Vendor Hub' };
 
@@ -23,11 +24,11 @@ export default async function VendorProductsPage({
 
   if (!user) redirect('/login?redirectTo=/vendor/products');
 
-  const { data: profile } = await supabase
+  const { data: profile } = (await supabase
     .from('profiles')
-    .select('role')
+    .select('*')
     .eq('id', user.id)
-    .single();
+    .single()) as { data: Profile | null; error: any };
 
   if (!profile || (profile.role !== 'vendor' && profile.role !== 'admin')) {
     redirect('/');
