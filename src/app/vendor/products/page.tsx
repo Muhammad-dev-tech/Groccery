@@ -137,9 +137,11 @@ export default async function VendorProductsPage({
               <CardTitle>Catalog Items ({products?.length || 0})</CardTitle>
               <CardDescription>Live stock levels, unit configurations, and listed prices.</CardDescription>
             </div>
-            <Badge variant={isApproved ? 'success' : 'warning'}>
-              Store: {store.status}
-            </Badge>
+            {!isApproved && (
+              <Badge variant="warning">
+                Store: {store.status}
+              </Badge>
+            )}
           </div>
         </CardHeader>
         <CardContent>

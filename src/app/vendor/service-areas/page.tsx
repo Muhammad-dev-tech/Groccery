@@ -50,9 +50,11 @@ export default async function VendorServiceAreasPage() {
               <h1 className="text-2xl font-bold tracking-tight text-slate-900">
                 Geographic Service & Delivery Zones
               </h1>
-              <Badge variant={store.status === 'approved' ? 'success' : 'warning'}>
-                Store {store.status}
-              </Badge>
+              {store.status !== 'approved' && (
+                <Badge variant="warning">
+                  Store {store.status}
+                </Badge>
+              )}
             </div>
             <p className="text-sm text-slate-600 mt-1">
               Configure the postal codes, neighborhoods, and municipal districts that{' '}

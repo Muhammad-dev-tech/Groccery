@@ -72,7 +72,9 @@ export default async function VendorDashboardPage() {
         </div>
 
         <div className="flex items-center gap-2">
-          <Badge variant={s.variant}>{s.label}</Badge>
+          {store.status !== 'approved' && (
+            <Badge variant={s.variant}>{s.label}</Badge>
+          )}
           <Link href="/vendor/service-areas">
             <Button size="sm" variant="outline">
               <Store className="w-4 h-4 mr-1.5 text-brand-600" />
@@ -88,20 +90,22 @@ export default async function VendorDashboardPage() {
         </div>
       </div>
 
-      {/* Store Status Notification */}
-      <Card>
-        <CardContent className="pt-6 flex items-start gap-3.5">
-          <s.Icon className="w-5 h-5 shrink-0 text-slate-500 mt-0.5" aria-hidden />
-          <div className="space-y-1">
-            <div className="font-semibold text-sm text-slate-900">
-              Store Status: {s.label}
+      {/* Store Status Notification (Only shown if pending or suspended) */}
+      {store.status !== 'approved' && (
+        <Card>
+          <CardContent className="pt-6 flex items-start gap-3.5">
+            <s.Icon className="w-5 h-5 shrink-0 text-slate-500 mt-0.5" aria-hidden />
+            <div className="space-y-1">
+              <div className="font-semibold text-sm text-slate-900">
+                Store Status: {s.label}
+              </div>
+              <p className="text-xs text-slate-600 leading-relaxed">
+                {s.text}
+              </p>
             </div>
-            <p className="text-xs text-slate-600 leading-relaxed">
-              {s.text}
-            </p>
-          </div>
-        </CardContent>
-      </Card>
+          </CardContent>
+        </Card>
+      )}
 
       {/* Metrics Row */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
