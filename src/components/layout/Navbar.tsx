@@ -134,13 +134,13 @@ export function Navbar() {
 
   return (
     <header className="sticky top-0 z-40 w-full border-b border-slate-200/80 dark:border-slate-800 bg-white/95 dark:bg-slate-950/95 backdrop-blur-md transition-colors">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between h-16">
-        <div className="flex items-center gap-4 sm:gap-6">
-          <Link href="/" className="flex items-center gap-2 group" aria-label="FreshGrocer home">
-            <div className="w-10 h-10 rounded-xl bg-brand-600 flex items-center justify-center text-white shadow-sm group-hover:bg-brand-700 transition-colors">
-              <ShoppingBag className="w-5 h-5" aria-hidden />
+      <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 flex items-center justify-between h-16">
+        <div className="flex items-center gap-2 sm:gap-4 min-w-0">
+          <Link href="/" className="flex items-center gap-1.5 sm:gap-2 group shrink-0" aria-label="FreshGrocer home">
+            <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-brand-600 flex items-center justify-center text-white shadow-sm group-hover:bg-brand-700 transition-colors">
+              <ShoppingBag className="w-4 h-4 sm:w-5 sm:h-5" aria-hidden />
             </div>
-            <span className="font-extrabold text-lg text-slate-900 dark:text-white tracking-tight">
+            <span className="font-extrabold text-base sm:text-lg text-slate-900 dark:text-white tracking-tight">
               Fresh<span className="text-brand-600 dark:text-brand-400">Grocer</span>
             </span>
           </Link>
@@ -153,7 +153,7 @@ export function Navbar() {
             Browse Marketplace
           </Link>
 
-          <React.Suspense fallback={<div className="h-7 w-24 rounded-xl bg-slate-100 dark:bg-slate-800 animate-pulse" />}>
+          <React.Suspense fallback={<div className="h-7 w-20 rounded-xl bg-slate-100 dark:bg-slate-800 animate-pulse" />}>
             <LocationSelector />
           </React.Suspense>
         </div>
@@ -164,18 +164,18 @@ export function Navbar() {
           {user ? roleLinks : guestLinks}
         </nav>
 
-        <div className="flex md:hidden items-center gap-2">
+        <div className="flex md:hidden items-center gap-1.5 shrink-0">
           <ThemeToggle />
           <CartNavButton onClick={() => setMobileOpen(false)} />
           <button
             type="button"
             onClick={() => setMobileOpen((o) => !o)}
-            className="p-2 rounded-lg text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+            className="p-1.5 rounded-lg text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
             aria-label="Toggle menu"
             aria-expanded={mobileOpen}
             aria-controls="mobile-nav"
           >
-            {mobileOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+            {mobileOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
           </button>
         </div>
       </div>

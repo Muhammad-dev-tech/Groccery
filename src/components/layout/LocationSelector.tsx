@@ -97,13 +97,13 @@ export function LocationSelector() {
         id="location-picker-btn"
         type="button"
         onClick={() => setIsOpen(!isOpen)}
-        className="inline-flex items-center gap-1.5 text-xs font-semibold px-2.5 py-1.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200 transition-colors shadow-2xs"
+        className="inline-flex items-center gap-1 sm:gap-1.5 text-[11px] sm:text-xs font-semibold px-2 py-1 sm:px-2.5 sm:py-1.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200 transition-colors shadow-2xs"
         aria-label="Select Delivery Location"
         aria-expanded={isOpen}
       >
         <MapPin className="w-3.5 h-3.5 text-brand-600 dark:text-brand-400 shrink-0" />
-        <span className="max-w-[130px] truncate text-slate-800 dark:text-slate-200">{activeLabel}</span>
-        <ChevronDown className="w-3 h-3 text-slate-400" />
+        <span className="max-w-[70px] sm:max-w-[130px] truncate text-slate-800 dark:text-slate-200">{activeLabel}</span>
+        <ChevronDown className="w-3 h-3 text-slate-400 shrink-0" />
       </button>
 
       {isOpen && (
