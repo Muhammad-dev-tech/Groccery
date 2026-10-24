@@ -81,7 +81,7 @@ export default async function MarketplacePage({
             </h1>
           </div>
           <p className="text-xs sm:text-sm text-slate-500">
-            Compare equivalent items across independent stores with transparent $/kg & $/L normalization.
+            Compare equivalent items across independent stores with transparent ₦/kg & ₦/L normalization.
           </p>
         </div>
 
