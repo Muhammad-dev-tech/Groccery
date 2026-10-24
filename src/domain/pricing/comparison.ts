@@ -176,19 +176,20 @@ export async function compareProductAcrossVendors(
     .eq('id', targetProductId)
     .single();
 
-  if (targetError || !target || !target.vendor) {
+  const t = target as any;
+  if (targetError || !t || !t.vendor) {
     return null;
   }
 
   const targetImageUrl =
-    target.images?.find((img: any) => img.is_primary)?.image_url ||
-    target.images?.[0]?.image_url ||
+    t.images?.find((img: any) => img.is_primary)?.image_url ||
+    t.images?.[0]?.image_url ||
     null;
 
   const targetNormalized = calculateNormalizedPrice(
-    target.price,
-    target.package_quantity,
-    target.unit_of_measurement
+    t.price,
+    t.package_quantity,
+    t.unit_of_measurement
   );
 
   // 2. Fetch candidates from same category across approved vendors
@@ -207,15 +208,15 @@ export async function compareProductAcrossVendors(
       vendor:vendor_stores!products_vendor_id_fkey(id, name, city, state, status),
       images:product_images(image_url, is_primary)
     `)
-    .eq('category_id', target.category_id)
+    .eq('category_id', t.category_id)
     .eq('is_archived', false)
     .eq('is_available', true)
-    .neq('id', target.id)
+    .neq('id', t.id)
     .eq('vendor.status', 'approved')
     .limit(20);
 
   let lowestPricePerBaseUnit = targetNormalized.normalizedPricePerBaseUnit;
-  let bestValueVendor = target.vendor.name;
+  let bestValueVendor = t.vendor.name;
 
   const evaluatedCandidates: ComparisonCandidate[] = (candidates || [])
     .filter((c: any) => c.vendor && c.vendor.status === 'approved')
@@ -227,7 +228,7 @@ export async function compareProductAcrossVendors(
 
       // Check dimension compatibility
       const comparable = areUnitsComparable(
-        target.unit_of_measurement,
+        t.unit_of_measurement,
         c.unit_of_measurement
       );
 
@@ -247,7 +248,7 @@ export async function compareProductAcrossVendors(
           isAvailable: c.is_available,
           imageUrl: img,
           isComparable: false,
-          incompatibilityReason: `Incompatible units (${target.unit_of_measurement} vs ${c.unit_of_measurement}): mass and volume cannot be compared directly.`,
+          incompatibilityReason: `Incompatible units (${t.unit_of_measurement} vs ${c.unit_of_measurement}): mass and volume cannot be compared directly.`,
         };
       }
 
@@ -298,17 +299,17 @@ export async function compareProductAcrossVendors(
 
   return {
     targetProduct: {
-      id: target.id,
-      name: target.name,
-      vendorName: target.vendor.name,
-      vendorCity: target.vendor.city,
-      vendorState: target.vendor.state,
-      categoryName: target.category?.name || 'General',
-      price: target.price,
-      currency: target.currency,
-      packageQuantity: target.package_quantity,
-      unitOfMeasurement: target.unit_of_measurement,
-      stockQuantity: target.stock_quantity,
+      id: t.id,
+      name: t.name,
+      vendorName: t.vendor.name,
+      vendorCity: t.vendor.city,
+      vendorState: t.vendor.state,
+      categoryName: t.category?.name || 'General',
+      price: t.price,
+      currency: t.currency,
+      packageQuantity: t.package_quantity,
+      unitOfMeasurement: t.unit_of_measurement,
+      stockQuantity: t.stock_quantity,
       imageUrl: targetImageUrl,
       normalizedPrice: targetNormalized,
     },
