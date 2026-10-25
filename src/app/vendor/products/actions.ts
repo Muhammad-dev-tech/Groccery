@@ -1,6 +1,6 @@
 'use server';
 
-import { createClient } from '@/lib/supabase/server';
+import { createClient, createAdminClient } from '@/lib/supabase/server';
 import { productSchema, updateProductSchema } from '@/lib/validations/product';
 import { revalidatePath } from 'next/cache';
 
@@ -209,6 +209,12 @@ export async function updateProductAction(formData: FormData): Promise<ProductAc
         is_primary: true,
       });
     }
+  } else if (rawData.imageUrl === '' || rawData.imageUrl === null) {
+    // Vendor explicitly removed the photo
+    await supabase
+      .from('product_images')
+      .delete()
+      .eq('product_id', parsed.data.id);
   }
 
   revalidatePath('/vendor/products');
@@ -287,4 +293,89 @@ export async function archiveProductAction(productId: string): Promise<ProductAc
 
   revalidatePath('/vendor/products');
   return { success: true, message: 'Product archived.' };
+}
+
+export interface ImageUploadResult {
+  success: boolean;
+  url?: string;
+  error?: string;
+}
+
+/**
+ * Uploads a vendor product photo (e.g. from mobile camera or gallery)
+ * to Supabase Storage ('product-images' bucket).
+ * Returns the public URL so it can be previewed and assigned to the product.
+ */
+export async function uploadProductImageAction(formData: FormData): Promise<ImageUploadResult> {
+  try {
+    const supabase = await createClient();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+
+    if (!user) {
+      return { success: false, error: 'Unauthorized: Authentication required.' };
+    }
+
+    const { data: store } = await supabase
+      .from('vendor_stores')
+      .select('id, status')
+      .eq('owner_id', user.id)
+      .single();
+
+    if (!store || store.status !== 'approved') {
+      return { success: false, error: 'Only approved store vendors can upload product photos.' };
+    }
+
+    const file = formData.get('file') as File | null;
+    if (!file || !(file instanceof File) || file.size === 0) {
+      return { success: false, error: 'No image file provided.' };
+    }
+
+    // 5MB maximum file size
+    if (file.size > 5 * 1024 * 1024) {
+      return { success: false, error: 'Image size exceeds maximum limit of 5MB.' };
+    }
+
+    const allowedMimeTypes = ['image/jpeg', 'image/png', 'image/webp', 'image/avif', 'image/gif'];
+    if (!allowedMimeTypes.includes(file.type)) {
+      return { success: false, error: 'Invalid file format. Please upload JPG, PNG, WebP, or AVIF.' };
+    }
+
+    const admin = createAdminClient();
+
+    // Ensure storage bucket exists
+    try {
+      const { data: buckets } = await admin.storage.listBuckets();
+      if (!buckets?.some((b) => b.name === 'product-images')) {
+        await admin.storage.createBucket('product-images', { public: true });
+      }
+    } catch (bucketErr) {
+      console.warn('[Storage] Bucket check error, proceeding with upload:', bucketErr);
+    }
+
+    const ext = file.name.split('.').pop()?.toLowerCase() || 'jpg';
+    const cleanExt = ['jpg', 'jpeg', 'png', 'webp', 'avif', 'gif'].includes(ext) ? ext : 'jpg';
+    const filePath = `${store.id}/${Date.now()}-${Math.random().toString(36).substring(2, 8)}.${cleanExt}`;
+    const arrayBuffer = await file.arrayBuffer();
+    const buffer = Buffer.from(arrayBuffer);
+
+    const { error: uploadError } = await admin.storage
+      .from('product-images')
+      .upload(filePath, buffer, {
+        contentType: file.type,
+        upsert: true,
+      });
+
+    if (uploadError) {
+      console.error('[Upload Product Image] Storage error:', uploadError);
+      return { success: false, error: `Upload failed: ${uploadError.message}` };
+    }
+
+    const { data: { publicUrl } } = admin.storage.from('product-images').getPublicUrl(filePath);
+    return { success: true, url: publicUrl };
+  } catch (err: any) {
+    console.error('[Upload Product Image] Unexpected error:', err);
+    return { success: false, error: err?.message || 'Failed to process image upload.' };
+  }
 }

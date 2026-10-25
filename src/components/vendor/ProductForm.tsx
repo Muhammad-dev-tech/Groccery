@@ -6,6 +6,7 @@ import { Input } from '@/components/ui/Input';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/Card';
 import { createProductAction, updateProductAction, type ProductActionResult } from '@/app/vendor/products/actions';
 import { PlusCircle, AlertCircle, CheckCircle2, Image as ImageIcon } from 'lucide-react';
+import { ProductImagePicker } from './ProductImagePicker';
 import type { UnitOfMeasure } from '@/types/database.types';
 
 interface CategoryOption {
@@ -200,15 +201,8 @@ export function ProductForm({ categories, initialData, onSuccess, onCancel }: Pr
               </select>
             </div>
 
-            <div className="space-y-1.5 sm:col-span-2">
-              <Input
-                label="Product Image URL (Optional)"
-                name="imageUrl"
-                type="url"
-                defaultValue={initialData?.imageUrl || ''}
-                placeholder="https://images.unsplash.com/..."
-                helperText="Paste a secure public image URL or Supabase storage link"
-              />
+            <div className="sm:col-span-2 pt-1">
+              <ProductImagePicker initialImageUrl={initialData?.imageUrl} />
             </div>
 
             <input type="hidden" name="currency" value="NGN" />
